@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout title="Page not found | CleaningNinja">
+  <main class="flex min-h-[80svh] items-center justify-center px-6 text-center">
+    <div>
+      <p class="eyebrow">404</p>
+      <h1 class="display-2 mt-4">This page got a little too clean</h1>
+      <p class="lead mx-auto mt-4 max-w-md">We couldn’t find what you were looking for — but we can definitely find your dirt.</p>
+      <a href={`${base}/`} class="btn btn-primary mt-8">Back to home</a>
+    </div>
+  </main>
+</BaseLayout>

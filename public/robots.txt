@@ -1,0 +1,3 @@
+# Unlisted while in testing — remove this Disallow at go-live / handoff.
+User-agent: *
+Disallow: /

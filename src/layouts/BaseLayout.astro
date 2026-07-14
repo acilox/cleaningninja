@@ -1,0 +1,245 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/syne';
+import '../styles/global.css';
+import { site, faqs } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'CleaningNinja | Professional Home & Commercial Cleaning Across Australia',
+  description = 'CleaningNinja — vetted, insured cleaners for homes, offices and end-of-lease bond cleans across Sydney, Melbourne, Brisbane, Adelaide & Perth. Book in 60 seconds. 100% happiness guarantee.',
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, ''); // no trailing slash
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+// JSON-LD — CleaningService (specific LocalBusiness subtype) + FAQPage.
+const businessLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CleaningService',
+  '@id': `${Astro.site}#business`,
+  name: site.fullName,
+  description,
+  url: canonical,
+  image: `${base}/og.svg`,
+  telephone: `+${site.waNumber}`,
+  email: site.email,
+  priceRange: '$$',
+  areaServed: ['Sydney', 'Melbourne', 'Brisbane', 'Adelaide', 'Perth'].map((name) => ({
+    '@type': 'City',
+    name,
+  })),
+  address: {
+    '@type': 'PostalAddress',
+    addressCountry: 'AU',
+    addressRegion: site.region,
+    addressLocality: site.city,
+  },
+  makesOffer: [
+    'Regular house cleaning',
+    'End-of-lease bond cleaning',
+    'Commercial & office cleaning',
+    'Carpet & upholstery cleaning',
+    'Window cleaning',
+    'Spring & deep cleaning',
+  ].map((name) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name } })),
+  sameAs: [site.socials.instagram, site.socials.facebook],
+};
+
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Unlisted while in testing — remove noindex at go-live/handoff. -->
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.fullName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={`${base}/og.svg`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${base}/og.svg`} />
+
+    <meta name="theme-color" content="#06080c" />
+    <script type="application/ld+json" set:html={JSON.stringify(businessLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+    <!-- Flag JS early so reveal styles only hide content when JS can un-hide it. -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <div id="scrollBar" aria-hidden="true"></div>
+
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-3 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-black focus:shadow-lg"
+      >Skip to content</a
+    >
+
+    <slot />
+
+    <!-- ── Lenis smooth scroll (CDN, deferred; purely a premium enhancement) ── -->
+    <script
+      is:inline
+      src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"
+      defer></script>
+
+    <script is:inline>
+      window.addEventListener('load', () => {
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // ── Lenis smooth scroll ──
+        if (typeof window.Lenis !== 'undefined' && !reduce) {
+          const lenis = new window.Lenis({ duration: 1.1, smoothWheel: true });
+          function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+          requestAnimationFrame(raf);
+        }
+
+        // ── Reveal-on-scroll via IntersectionObserver (no CDN dependency) ──
+        const revealEls = document.querySelectorAll(
+          '[data-reveal],[data-reveal-left],[data-reveal-right],[data-reveal-group]'
+        );
+        const showAll = () => revealEls.forEach((el) => el.classList.add('is-in'));
+        if (reduce || !('IntersectionObserver' in window)) {
+          showAll();
+        } else {
+          const io = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((e) => {
+                if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+              });
+            },
+            { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+          );
+          revealEls.forEach((el) => io.observe(el));
+        }
+
+        // ── Step connector line draw (HowItWorks) ──
+        const line = document.querySelector('.step-line--anim');
+        if (line && !reduce && 'IntersectionObserver' in window) {
+          const lio = new IntersectionObserver((entries) => {
+            entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('drawn'); lio.unobserve(e.target); } });
+          }, { threshold: 0.5 });
+          lio.observe(line);
+        } else if (line) {
+          line.classList.add('drawn');
+        }
+      });
+
+      // ── Scroll progress bar + nav state + sticky CTA (no lib needed) ──
+      (function () {
+        const bar = document.getElementById('scrollBar');
+        const nav = document.getElementById('siteNav');
+        const sticky = document.getElementById('stickyBook');
+        const onScroll = () => {
+          const h = document.documentElement;
+          const max = h.scrollHeight - h.clientHeight;
+          const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+          if (bar) bar.style.width = pct + '%';
+          if (nav) nav.classList.toggle('scrolled', h.scrollTop > 12);
+          if (sticky) {
+            const nearBottom = max - h.scrollTop < 300;
+            sticky.classList.toggle('show', h.scrollTop > 620 && !nearBottom);
+          }
+        };
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+      })();
+
+      // ── Mobile nav toggle ──
+      (function () {
+        const btn = document.getElementById('navToggle');
+        const menu = document.getElementById('mobileMenu');
+        if (!btn || !menu) return;
+        btn.addEventListener('click', () => {
+          const open = menu.classList.toggle('hidden') === false;
+          btn.setAttribute('aria-expanded', String(open));
+        });
+        menu.querySelectorAll('a').forEach((a) =>
+          a.addEventListener('click', () => menu.classList.add('hidden'))
+        );
+      })();
+
+      // ── Count-up for stat numbers ──
+      (function () {
+        const nums = document.querySelectorAll('[data-count]');
+        if (!nums.length) return;
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const fmt = (v, decimals) =>
+          v.toLocaleString('en-AU', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+        const run = (el) => {
+          const target = parseFloat(el.getAttribute('data-count'));
+          const suffix = el.getAttribute('data-suffix') || '';
+          const decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
+          if (reduce) { el.textContent = fmt(target, decimals) + suffix; return; }
+          const dur = 1600, start = performance.now();
+          const step = (now) => {
+            const p = Math.min((now - start) / dur, 1);
+            const eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = fmt(target * eased, decimals) + suffix;
+            if (p < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        };
+        if (!('IntersectionObserver' in window)) { nums.forEach(run); return; }
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((e) => { if (e.isIntersecting) { run(e.target); io.unobserve(e.target); } });
+        }, { threshold: 0.6 });
+        nums.forEach((n) => io.observe(n));
+      })();
+
+      // ── Magnetic elements (pointer only, respects reduced-motion) ──
+      (function () {
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce || !window.matchMedia('(pointer:fine)').matches) return;
+        document.querySelectorAll('[data-magnetic]').forEach((el) => {
+          el.addEventListener('pointermove', (e) => {
+            const r = el.getBoundingClientRect();
+            const x = e.clientX - r.left - r.width / 2;
+            const y = e.clientY - r.top - r.height / 2;
+            el.style.transform = `translate(${x * 0.14}px, ${y * 0.22}px)`;
+          });
+          el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+        });
+      })();
+
+      // ── FAQ accordion ──
+      (function () {
+        document.querySelectorAll('.faq-item').forEach((item) => {
+          const q = item.querySelector('.faq-q');
+          if (!q) return;
+          q.addEventListener('click', () => {
+            const open = item.getAttribute('data-open') === 'true';
+            item.setAttribute('data-open', String(!open));
+            q.setAttribute('aria-expanded', String(!open));
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

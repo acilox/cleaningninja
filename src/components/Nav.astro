@@ -1,0 +1,71 @@
+---
+import { site } from '../data/site';
+
+const links = [
+  { href: '#services', label: 'Services' },
+  { href: '#how', label: 'How it works' },
+  { href: '#coverage', label: 'Coverage' },
+  { href: '#reviews', label: 'Reviews' },
+  { href: '#faq', label: 'FAQ' },
+];
+---
+
+<header
+  id="siteNav"
+  class="fixed inset-x-0 top-0 z-50 border-b border-transparent"
+>
+  <nav class="container-x flex items-center justify-between py-3.5" aria-label="Primary">
+    <!-- Brand -->
+    <a href="#top" class="flex items-center gap-2.5">
+      <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true">
+        <defs>
+          <linearGradient id="navg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#00D4AA" />
+            <stop offset="1" stop-color="#00A88A" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M32 12c-6 8-10 13-10 18a10 10 0 0 0 20 0c0-5-4-10-10-18z"
+          fill="url(#navg)"></path>
+        <circle cx="28" cy="30" r="2.6" fill="#EDF2F7" opacity="0.85"></circle>
+      </svg>
+      <span class="font-[var(--font-display)] text-lg font-extrabold tracking-tight text-white"
+        >Cleaning<span class="text-[var(--color-accent)]">Ninja</span></span
+      >
+    </a>
+
+    <!-- Desktop links -->
+    <div class="hidden items-center gap-8 md:flex">
+      {links.map((l) => <a href={l.href} class="nav-link text-sm font-medium">{l.label}</a>)}
+    </div>
+
+    <!-- Right cluster -->
+    <div class="flex items-center gap-3">
+      <span class="pill hidden sm:inline-flex"><span class="dot"></span>Same-day quotes</span>
+      <a href="#quote" data-magnetic class="btn btn-primary hidden sm:inline-flex text-sm">Get a free quote</a>
+
+      <!-- Mobile toggle -->
+      <button
+        id="navToggle"
+        class="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--color-line)] text-white"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobileMenu"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div id="mobileMenu" class="hidden border-t border-[var(--color-line)] bg-[var(--color-surface)]/95 backdrop-blur md:hidden">
+    <div class="container-x flex flex-col gap-1 py-3">
+      {links.map((l) => (
+        <a href={l.href} class="rounded-lg px-2 py-3 text-[var(--color-muted-2)] hover:bg-white/5 hover:text-white">{l.label}</a>
+      ))}
+      <a href="#quote" class="btn btn-primary mt-2 justify-center">Get a free quote</a>
+    </div>
+  </div>
+</header>

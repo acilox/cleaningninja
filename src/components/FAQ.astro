@@ -1,0 +1,31 @@
+---
+import { faqs } from '../data/site';
+---
+
+<section id="faq" class="section bg-[var(--color-bg-2)]">
+  <div class="container-x">
+    <div class="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
+      <div data-reveal-left>
+        <span class="eyebrow">Good to know</span>
+        <h2 class="display-2 mt-4">Questions, answered</h2>
+        <p class="lead mt-4">Everything you might want to check before booking. Still unsure? Just ask.</p>
+      </div>
+
+      <div data-reveal>
+        {faqs.map((f, i) => (
+          <div class="faq-item" data-open={i === 0 ? 'true' : 'false'}>
+            <button class="faq-q" aria-expanded={i === 0 ? 'true' : 'false'}>
+              <span class="text-base font-semibold text-white sm:text-lg">{f.q}</span>
+              <svg class="faq-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+            <div class="faq-a">
+              <div>
+                <p class="pb-5 leading-relaxed text-[var(--color-muted-2)]">{f.a}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

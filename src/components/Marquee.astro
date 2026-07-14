@@ -1,0 +1,18 @@
+---
+const items = [
+  '5-Star Rated', 'Fully Insured', 'Bond-Back Guarantee', 'Same-Day Quotes',
+  'Eco-Friendly', 'Police-Checked', 'Weekly & One-Off', 'No Lock-In Contracts',
+];
+// Duplicate the run so the -50% keyframe loops seamlessly.
+const run = [...items, ...items];
+---
+
+<section class="border-y border-[var(--color-line)] bg-[var(--color-bg-2)] py-6" aria-hidden="true">
+  <div class="marquee">
+    <div class="marquee__track">
+      {run.map((t) => (
+        <span class="marquee__item">{t}<span class="sep">✦</span></span>
+      ))}
+    </div>
+  </div>
+</section>

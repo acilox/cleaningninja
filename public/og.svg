@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#06080C"/>
+      <stop offset="1" stop-color="#0F1318"/>
+    </linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00D4AA"/>
+      <stop offset="1" stop-color="#00A88A"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#00D4AA" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#00D4AA" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <ellipse cx="930" cy="150" rx="420" ry="340" fill="url(#glow)"/>
+  <!-- droplet mark -->
+  <g transform="translate(90,150)">
+    <path d="M60 0C40 26 26 44 26 62a34 34 0 0 0 68 0C94 44 80 26 60 0z" fill="url(#teal)"/>
+    <circle cx="47" cy="55" r="8" fill="#EDF2F7" opacity="0.85"/>
+  </g>
+  <text x="90" y="360" font-family="Syne, Arial, sans-serif" font-size="86" font-weight="800" fill="#EDF2F7">CleaningNinja</text>
+  <text x="92" y="430" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="500" fill="#00D4AA">Spotless. Every time.</text>
+  <text x="92" y="500" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="400" fill="#64748B">Professional home &amp; commercial cleaning across Australia</text>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00D4AA"/>
+      <stop offset="1" stop-color="#00A88A"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#06080C"/>
+  <!-- ninja mask band -->
+  <path d="M12 30h40v6a8 8 0 0 1-8 8H20a8 8 0 0 1-8-8z" fill="url(#g)" opacity="0.18"/>
+  <!-- droplet -->
+  <path d="M32 12c-6 8-10 13-10 18a10 10 0 0 0 20 0c0-5-4-10-10-18z" fill="url(#g)"/>
+  <!-- shine -->
+  <circle cx="28" cy="30" r="2.6" fill="#EDF2F7" opacity="0.85"/>
+</svg>

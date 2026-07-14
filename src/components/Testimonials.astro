@@ -1,0 +1,32 @@
+---
+import { testimonials } from '../data/site';
+---
+
+<section id="reviews" class="section">
+  <div class="glow-spot"></div>
+  <div class="container-x relative">
+    <div class="mx-auto max-w-2xl text-center" data-reveal>
+      <span class="eyebrow">Loved by locals</span>
+      <h2 class="display-2 mt-4">Real results, real reviews</h2>
+      <div class="mt-4 flex items-center justify-center gap-2 text-[var(--color-muted-2)]">
+        <span class="text-lg text-[var(--color-warm)]">★★★★★</span>
+        <span class="text-sm">4.9 / 5 from 300+ happy customers</span>
+      </div>
+    </div>
+
+    <div class="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+      {testimonials.map((t) => (
+        <figure class="card flex flex-col p-6">
+          <div class="text-[var(--color-warm)]" aria-label={`${t.rating} out of 5 stars`}>
+            {'★'.repeat(t.rating)}
+          </div>
+          <blockquote class="mt-4 flex-1 text-sm leading-relaxed text-[var(--color-text)]">“{t.quote}”</blockquote>
+          <figcaption class="mt-5 border-t border-[var(--color-line)] pt-4">
+            <p class="text-sm font-bold text-white">{t.name}</p>
+            <p class="text-xs text-[var(--color-muted)]">{t.where}</p>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>

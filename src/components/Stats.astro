@@ -1,0 +1,18 @@
+---
+import { stats } from '../data/site';
+---
+
+<section class="section !py-16">
+  <div class="container-x">
+    <div class="grid gap-8 sm:grid-cols-3" data-reveal-group>
+      {stats.map((s) => (
+        <div class="text-center">
+          <div class="stat-num">
+            <span data-count={s.value} data-suffix={s.suffix} data-decimals="0">0{s.suffix}</span>
+          </div>
+          <p class="mt-2 text-sm font-medium uppercase tracking-wider text-[var(--color-muted)]">{s.label}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
