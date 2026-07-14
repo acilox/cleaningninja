@@ -96,10 +96,6 @@ const faqLd = {
   <body class="grain">
     <div id="scrollBar" aria-hidden="true"></div>
 
-    <!-- Custom context-aware cursor (pointer:fine only; native cursor is the fallback) -->
-    <div id="cursor" aria-hidden="true"><span class="clabel"></span></div>
-    <div id="cursorDot" aria-hidden="true"></div>
-
     <a
       href="#main"
       class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-3 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-black focus:shadow-lg"
@@ -279,38 +275,6 @@ const faqLd = {
             entries.forEach((e) => { if (e.isIntersecting) { run(e.target); io.unobserve(e.target); } });
           }, { threshold: 0.6 });
           nums.forEach((n) => io.observe(n));
-        })();
-
-        // ── Custom context-aware cursor (pointer:fine only) ──
-        (function () {
-          if (reduce || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-          const ring = document.getElementById('cursor');
-          const dot = document.getElementById('cursorDot');
-          if (!ring || !dot) return;
-          document.documentElement.classList.add('cursor-on');
-          const label = ring.querySelector('.clabel');
-          let rx = innerWidth / 2, ry = innerHeight / 2, dx = rx, dy = ry, mx = rx, my = ry;
-          // Keep the cursor hidden until the pointer actually moves (no dot parked mid-screen on load).
-          ring.style.opacity = '0'; dot.style.opacity = '0';
-          let shown = false;
-          window.addEventListener('pointermove', (e) => {
-            mx = e.clientX; my = e.clientY;
-            if (!shown) { shown = true; ring.style.opacity = '1'; dot.style.opacity = '1'; }
-          }, { passive: true });
-          const loop = () => {
-            dx += (mx - dx) * 0.9; dy += (my - dy) * 0.9;
-            rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
-            dot.style.transform = `translate(${dx}px, ${dy}px)`;
-            ring.style.transform = `translate(${rx}px, ${ry}px)`;
-            requestAnimationFrame(loop);
-          };
-          requestAnimationFrame(loop);
-          const setLabel = (t) => { if (label) label.textContent = t; ring.classList.toggle('is-label', !!t); };
-          document.querySelectorAll('a, button, [data-cursor], .ba, [role="slider"]').forEach((el) => {
-            const custom = el.getAttribute('data-cursor');
-            el.addEventListener('pointerenter', () => { ring.classList.add('is-hover'); setLabel(custom || ''); });
-            el.addEventListener('pointerleave', () => { ring.classList.remove('is-hover'); setLabel(''); });
-          });
         })();
 
         // ── 3D tilt cards (hover:hover only) ──

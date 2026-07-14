@@ -175,6 +175,38 @@ export const testimonials = [
     quote:
       'Missed one spot on the first deep clean, mentioned it, and they were back the next day at no charge. That’s rare these days.',
   },
+  {
+    name: 'Aisha N.',
+    where: 'Parramatta, NSW',
+    rating: 5,
+    date: 'Bond clean · Apr 2026',
+    quote:
+      'The agent signed off the inspection on the spot. Booking took two minutes and the quote was exactly what I paid.',
+  },
+  {
+    name: 'Tom & Elise',
+    where: 'Carlton, VIC',
+    rating: 5,
+    date: 'Weekly · Mar 2026',
+    quote:
+      'We come home every Friday to a spotless flat. Same cleaner, always on time — it’s genuinely the best money we spend.',
+  },
+  {
+    name: 'Marcus W.',
+    where: 'Newstead, QLD',
+    rating: 5,
+    date: 'Office clean · Feb 2026',
+    quote:
+      'Switched from a big franchise and the difference is night and day. Reliable, thorough, and the team actually cares.',
+  },
+  {
+    name: 'Hannah P.',
+    where: 'Subiaco, WA',
+    rating: 5,
+    date: 'Carpet clean · Mar 2026',
+    quote:
+      'Carpets that I thought were ruined came up looking brand new. Dried within hours and no chemical smell at all.',
+  },
 ];
 
 // ── Stats ─────────────────────────────────────────────────────────────────

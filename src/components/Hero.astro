@@ -28,8 +28,10 @@ const trust = ['Police-checked', 'Fully insured', 'Bond-back guarantee'];
   </div>
 
   <!-- Editorial content (left; sits on the solid dark canvas) -->
-  <div class="container-x relative z-10 flex items-center pt-28 pb-6 lg:min-h-[100svh] lg:pt-24 lg:pb-24">
-    <div id="heroCopy" class="max-w-xl">
+  <!-- pointer-events pass through the empty wrapper so the right-half before/after
+       photo stays draggable on desktop; the copy re-enables events for itself. -->
+  <div class="container-x pointer-events-none relative z-10 flex items-center pt-28 pb-6 lg:min-h-[100svh] lg:pt-24 lg:pb-24">
+    <div id="heroCopy" class="pointer-events-auto max-w-xl">
       <span class="hero-pill rise" style="animation-delay:.05s">
         <span class="dot"></span>
         <span class="text-[var(--color-warm)]">★★★★★</span>

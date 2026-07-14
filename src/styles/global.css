@@ -436,32 +436,6 @@
 }
 .tilt:hover .tilt__glare { opacity: 1; }
 
-/* ============================================================
-   Custom context-aware cursor (pointer:fine only)
-   ============================================================ */
-#cursor, #cursorDot { display: none; }
-@media (hover: hover) and (pointer: fine) {
-  html.js.cursor-on { cursor: none; }
-  html.js.cursor-on a, html.js.cursor-on button, html.js.cursor-on [role="slider"], html.js.cursor-on .ba, html.js.cursor-on input, html.js.cursor-on select, html.js.cursor-on textarea { cursor: none; }
-  #cursor {
-    display: block; position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none;
-    width: 42px; height: 42px; margin: -21px 0 0 -21px; border-radius: 999px;
-    border: 1px solid rgba(0,212,170,0.7);
-    display: grid; place-items: center;
-    font-family: var(--font-sans); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-accent);
-    transition: width .25s ease, height .25s ease, margin .25s ease, background-color .25s ease, border-color .25s ease;
-    will-change: transform;
-  }
-  #cursor.is-hover { width: 68px; height: 68px; margin: -34px 0 0 -34px; background: rgba(0,212,170,0.10); }
-  #cursor .clabel { opacity: 0; transition: opacity .2s ease; }
-  #cursor.is-label .clabel { opacity: 1; }
-  #cursorDot {
-    display: block; position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none;
-    width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 999px; background: var(--color-accent);
-    will-change: transform;
-  }
-}
-
 /* ---------- Reveal-on-scroll (IntersectionObserver adds .is-in) ----------
    Gated behind `.js` on <html> so that if JavaScript never runs, nothing is
    hidden — content shows at full opacity. */
@@ -554,6 +528,45 @@
 .hero-orb { animation: breathe 9s ease-in-out infinite; }
 @keyframes breathe { 0%,100% { opacity: .85; transform: scale(1);} 50% { opacity: 1; transform: scale(1.08);} }
 
+/* ============================================================
+   Interactive polish — tactile hover on cards + review marquee
+   ============================================================ */
+.lift { transition: transform .3s cubic-bezier(.2,.8,.2,1), border-color .3s ease, box-shadow .3s ease; }
+@media (hover: hover) and (pointer: fine) {
+  .lift:hover {
+    transform: translateY(-5px);
+    border-color: rgba(0,212,170,0.45);
+    box-shadow: 0 22px 48px -24px rgba(0,212,170,0.45);
+  }
+}
+
+/* Suburb chips — light up on hover */
+.chip { transition: color .25s ease, border-color .25s ease, background-color .25s ease; }
+@media (hover: hover) {
+  .chip:hover { color: var(--color-accent); border-color: rgba(0,212,170,0.5); background: var(--color-accent-soft); }
+}
+
+/* FAQ question row — subtle accent affordance on hover */
+@media (hover: hover) {
+  .faq-q:hover span { color: var(--color-accent); }
+  .faq-q:hover .faq-icon { color: var(--color-accent); }
+}
+
+/* Reviews — seamless, pause-on-hover marquee.
+   Each card owns its trailing margin so translateX(-50%) loops perfectly. */
+.reviews-marquee {
+  position: relative; overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.reviews-track { display: flex; width: max-content; animation: marquee 60s linear infinite; }
+.reviews-marquee:hover .reviews-track { animation-play-state: paused; }
+.review-card { width: 20rem; flex: 0 0 auto; margin-right: 1.25rem; transition: border-color .3s ease, transform .3s ease; }
+@media (hover: hover) {
+  .review-card:hover { border-color: rgba(0,212,170,0.4); transform: translateY(-4px); }
+}
+@media (max-width: 640px) { .review-card { width: 16.5rem; } }
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
@@ -572,6 +585,11 @@
   .seal-ring { animation: none !important; }
   .spotless-fill::after { animation: none !important; display: none; }
   .hero-orb { animation: none !important; }
+  .lift:hover, .review-card:hover { transform: none !important; }
+  .reviews-track { animation: none !important; flex-wrap: wrap; justify-content: center; gap: 1.25rem; width: auto; }
+  .review-card { margin-right: 0 !important; }
+  .review-dup { display: none !important; }
+  .reviews-marquee { -webkit-mask-image: none !important; mask-image: none !important; }
 }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
