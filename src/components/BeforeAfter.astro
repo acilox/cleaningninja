@@ -77,13 +77,24 @@ const pairs: Record<string, { before: ImageMetadata; after: ImageMetadata }> = {
   (function () {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // Hero "Spotless-o-meter" — reflects how much of the cleaned (after) image is revealed.
+    const cleanNum = document.getElementById('cleanNum');
+    const cleanBar = document.getElementById('cleanBar');
+    const updateMeter = (pos) => {
+      const clean = Math.round(100 - pos);
+      if (cleanNum) cleanNum.textContent = String(clean);
+      if (cleanBar) cleanBar.style.width = clean + '%';
+    };
+
     // Each .ba is an independent slider (pointer + touch + keyboard).
     function initSlider(ba) {
       const handle = ba.querySelector('.ba-handle');
+      const isHero = ba.classList.contains('ba--hero');
       const setPos = (pct) => {
         pct = Math.max(0, Math.min(100, pct));
         ba.style.setProperty('--pos', pct + '%');
         if (handle) handle.setAttribute('aria-valuenow', String(Math.round(pct)));
+        if (isHero) updateMeter(pct);
       };
       const fromEvent = (e) => {
         const r = ba.getBoundingClientRect();
@@ -119,7 +130,7 @@ const pairs: Record<string, { before: ImageMetadata; after: ImageMetadata }> = {
       ba._demoed = true;
       const hero = ba.classList.contains('ba--hero');
       const kf = hero
-        ? [{ p: 100, t: 0 }, { p: 12, t: 1150 }, { p: 55, t: 1750 }]
+        ? [{ p: 100, t: 0 }, { p: 8, t: 1250 }, { p: 38, t: 2000 }]
         : [{ p: 100, t: 0 }, { p: 50, t: 900 }];
       const start = performance.now();
       const step = (now) => {

@@ -12,7 +12,7 @@ const trust = ['Police-checked', 'Fully insured', 'Bond-back guarantee'];
   <span class="hero-orb" aria-hidden="true"></span>
 
   <!-- Editorial content (left; sits on the solid dark canvas) -->
-  <div class="container-x relative z-10 flex items-center pt-32 pb-12 lg:min-h-[100svh] lg:pt-24 lg:pb-24">
+  <div class="container-x relative z-10 flex items-center pt-28 pb-6 lg:min-h-[100svh] lg:pt-24 lg:pb-24">
     <div id="heroCopy" class="max-w-xl">
       <span class="hero-pill rise" style="animation-delay:.05s">
         <span class="dot"></span>
@@ -24,12 +24,20 @@ const trust = ['Police-checked', 'Fully insured', 'Bond-back guarantee'];
         A spotless space,<br /><span class="text-gradient"><em>every single time.</em></span>
       </h1>
 
-      <p class="lead mt-6 rise" style="animation-delay:.32s">
-        Drag the photo&nbsp;→&nbsp; that’s one of our real end-of-lease cleans. Bond-standard
-        results from police-checked crews, quoted the same day.
-      </p>
+      <!-- Spotless-o-meter — live, tied to the before/after slider -->
+      <div class="spotless rise" style="animation-delay:.32s" aria-hidden="true">
+        <div class="spotless-top">
+          <span class="spotless-label">Spotless-o-meter</span>
+          <span class="spotless-num"><span id="cleanNum">50</span><span class="spotless-pct">% spotless</span></span>
+        </div>
+        <div class="spotless-track"><span id="cleanBar" class="spotless-fill"></span></div>
+        <p class="spotless-hint">
+          Drag the photo&nbsp;→&nbsp; watch a real end-of-lease clean hit <strong>100%</strong>.
+          Bond-standard, police-checked, quoted same day.
+        </p>
+      </div>
 
-      <div class="mt-8 flex flex-wrap items-center gap-3 rise" style="animation-delay:.46s">
+      <div class="mt-7 flex flex-wrap items-center gap-3 rise lg:mt-8" style="animation-delay:.46s">
         <a href="#quote" data-magnetic data-cursor="Book" class="btn btn-primary btn-lg">
           <span class="mag-label inline-flex items-center gap-2">
             Get a free quote
@@ -39,7 +47,7 @@ const trust = ['Police-checked', 'Fully insured', 'Bond-back guarantee'];
         <a href="#results" data-cursor="See" class="btn btn-ghost btn-lg">See more results</a>
       </div>
 
-      <ul class="mt-9 flex flex-wrap gap-x-6 gap-y-2.5 rise" style="animation-delay:.58s">
+      <ul class="mt-6 flex flex-wrap gap-x-6 gap-y-2.5 rise lg:mt-9" style="animation-delay:.58s">
         {trust.map((t) => (
           <li class="inline-flex items-center gap-2 text-sm text-[var(--color-text)]">
             <svg class="text-[var(--color-accent)]" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
