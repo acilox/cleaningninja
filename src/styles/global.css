@@ -505,6 +505,55 @@
 @keyframes bob { 0%,100% { transform: translateY(0);} 50% { transform: translateY(8px);} }
 .scroll-cue { animation: bob 1.8s ease-in-out infinite; }
 
+/* ============================================================
+   Ambient light rhythm — keep luminance consistent all the way
+   down the page so darker sections don't read as "dimmed".
+   Positional variants of .glow-spot for tasteful variety.
+   ============================================================ */
+.glow-spot--left   { background: radial-gradient(48% 55% at 15% 8%,  rgba(0,212,170,0.11), transparent 68%); }
+.glow-spot--center { background: radial-gradient(55% 50% at 50% 0%,  rgba(0,212,170,0.10), transparent 70%); }
+.glow-spot--warm   { background: radial-gradient(50% 55% at 85% 12%, rgba(255,213,128,0.06), transparent 68%); }
+.glow-spot--bottom { background: radial-gradient(60% 45% at 50% 100%, rgba(0,212,170,0.08), transparent 70%); }
+
+/* ============================================================
+   Sparkles — twinkling accents beside the hero copy (left).
+   Pure CSS; each sparkle scales + fades on its own offset.
+   ============================================================ */
+.sparkles { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.sparkle {
+  position: absolute; color: var(--color-accent);
+  opacity: 0; transform-origin: center;
+  animation: twinkle 3.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(0,212,170,0.55));
+}
+.sparkle--gold { color: var(--color-warm); filter: drop-shadow(0 0 6px rgba(255,213,128,0.5)); }
+@keyframes twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+  45%      { opacity: 0.95; transform: scale(1) rotate(90deg); }
+  70%      { opacity: 0.4; transform: scale(0.8) rotate(140deg); }
+}
+
+/* Slowly rotating dashed ring on the guarantee seal. */
+.seal-ring { animation: spin 26s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Animated sheen travelling across the Spotless-o-meter fill. */
+.spotless-fill::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.55) 50%, transparent 70%);
+  transform: translateX(-100%);
+  animation: sheen 3.4s ease-in-out 1.2s infinite;
+}
+.spotless-fill { position: relative; overflow: hidden; }
+@keyframes sheen { 0% { transform: translateX(-100%);} 55%,100% { transform: translateX(220%);} }
+
+/* Gentle float for the WhatsApp / sticky affordances and seal. */
+@keyframes floatSoft { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-6px);} }
+
+/* Slow ambient breathe on the hero orb so the light feels alive. */
+.hero-orb { animation: breathe 9s ease-in-out infinite; }
+@keyframes breathe { 0%,100% { opacity: .85; transform: scale(1);} 50% { opacity: 1; transform: scale(1.08);} }
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
@@ -519,6 +568,10 @@
   .marquee__track { animation: none; }
   .svc-photo { opacity: 1 !important; transform: none !important; }
   .tilt { transform: none !important; }
+  .sparkle { display: none !important; }
+  .seal-ring { animation: none !important; }
+  .spotless-fill::after { animation: none !important; display: none; }
+  .hero-orb { animation: none !important; }
 }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
