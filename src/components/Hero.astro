@@ -1,22 +1,23 @@
 ---
 import { Image } from 'astro:assets';
 import { site } from '../data/site';
-import heroBg from '../assets/hero-background.jpg';
+import ovenBefore from '../assets/ba-oven-before.jpg';
+import ovenAfter from '../assets/ba-oven-after.jpg';
 
-const trust = ['Police-checked', 'Fully insured', 'Same-day quotes'];
+const trust = ['Police-checked', 'Fully insured', 'Bond-back guarantee'];
 ---
 
 <section id="top" class="hero relative overflow-hidden">
   <div class="mesh" aria-hidden="true"></div>
   <span class="hero-orb" aria-hidden="true"></span>
 
-  <div class="container-x relative grid items-center gap-12 pt-32 pb-20 lg:min-h-[100svh] lg:grid-cols-[1.02fr_0.98fr] lg:gap-14 lg:pt-24 lg:pb-24">
-    <!-- LEFT — editorial content -->
-    <div id="heroCopy" class="relative z-10 max-w-xl">
+  <!-- Editorial content (left; sits on the solid dark canvas) -->
+  <div class="container-x relative z-10 flex items-center pt-32 pb-12 lg:min-h-[100svh] lg:pt-24 lg:pb-24">
+    <div id="heroCopy" class="max-w-xl">
       <span class="hero-pill rise" style="animation-delay:.05s">
         <span class="dot"></span>
         <span class="text-[var(--color-warm)]">★★★★★</span>
-        Rated 4.9 by 300+ Australian homes
+        Rated 4.9 · Bond-back guaranteed
       </span>
 
       <h1 id="heroTitle" class="hero-title mt-6 rise" style="animation-delay:.15s">
@@ -24,7 +25,8 @@ const trust = ['Police-checked', 'Fully insured', 'Same-day quotes'];
       </h1>
 
       <p class="lead mt-6 rise" style="animation-delay:.32s">
-        {site.subtagline}
+        Drag the photo&nbsp;→&nbsp; that’s one of our real end-of-lease cleans. Bond-standard
+        results from police-checked crews, quoted the same day.
       </p>
 
       <div class="mt-8 flex flex-wrap items-center gap-3 rise" style="animation-delay:.46s">
@@ -34,7 +36,7 @@ const trust = ['Police-checked', 'Fully insured', 'Same-day quotes'];
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </span>
         </a>
-        <a href="#results" data-cursor="See" class="btn btn-ghost btn-lg">See the results</a>
+        <a href="#results" data-cursor="See" class="btn btn-ghost btn-lg">See more results</a>
       </div>
 
       <ul class="mt-9 flex flex-wrap gap-x-6 gap-y-2.5 rise" style="animation-delay:.58s">
@@ -46,42 +48,36 @@ const trust = ['Police-checked', 'Fully insured', 'Same-day quotes'];
         ))}
       </ul>
     </div>
+  </div>
 
-    <!-- RIGHT — framed cinematic panel + floating proof -->
-    <div class="hero-visual relative z-10">
-      <div class="hero-frame">
-        <Image src={heroBg} alt="A pristine, softly lit modern Australian living space at dusk" widths={[500, 800, 1100, 1400]} sizes="(min-width:1024px) 45vw, 92vw" loading="eager" fetchpriority="high" quality={82} class="hero-img" />
-        <div class="hero-frame-grad"></div>
-      </div>
-
-      <!-- Floating card: rating -->
-      <div class="hero-fc hero-fc--rating">
-        <div class="flex items-center gap-3">
-          <span class="hero-fc-num">4.9</span>
-          <div>
-            <div class="text-[var(--color-warm)] leading-none">★★★★★</div>
-            <p class="mt-1 text-xs text-[var(--color-muted-2)]">300+ verified reviews</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Floating card: guarantee -->
-      <div class="hero-fc hero-fc--guarantee">
-        <div class="flex items-center gap-3">
-          <span class="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
-          </span>
-          <div>
-            <p class="text-sm font-semibold text-white leading-tight">100% Bond-back</p>
-            <p class="text-xs text-[var(--color-muted-2)]">guaranteed in writing</p>
-          </div>
-        </div>
+  <!-- The hook: a full-height, auto-sweeping, draggable before/after -->
+  <div class="hero-visual2 relative mx-5 mb-6 h-[56svh] overflow-hidden rounded-2xl border border-[var(--color-line)] lg:absolute lg:inset-y-0 lg:right-0 lg:m-0 lg:h-auto lg:w-[53%] lg:rounded-none lg:border-0">
+    <div class="ba ba--hero" style="--pos:50%" data-cursor="Drag">
+      <Image class="ba-before" src={ovenBefore} alt="A grimy, grease-caked oven — before CleaningNinja" widths={[600, 900, 1300, 1700]} sizes="(min-width:1024px) 55vw, 100vw" loading="eager" fetchpriority="high" quality={80} />
+      <Image class="ba-after" src={ovenAfter} alt="The same oven, spotless and gleaming — after CleaningNinja" widths={[600, 900, 1300, 1700]} sizes="(min-width:1024px) 55vw, 100vw" loading="eager" quality={80} />
+      <span class="ba-label ba-label--before">Before</span>
+      <span class="ba-label ba-label--after">After</span>
+      <div class="ba-divider"></div>
+      <div
+        class="ba-handle"
+        role="slider"
+        tabindex="0"
+        aria-label="Drag to reveal the cleaned oven"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="50"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
       </div>
     </div>
+    <!-- seam fade into the dark canvas (desktop) -->
+    <div class="hero-fade" aria-hidden="true"></div>
+    <!-- caption -->
+    <p class="hero-cap">A real end-of-lease oven clean — one visit.</p>
   </div>
 
   <!-- Scroll cue -->
-  <a href="#trust" aria-label="Scroll down" class="scroll-cue absolute bottom-6 left-1/2 hidden -translate-x-1/2 text-[var(--color-muted-2)] lg:block">
+  <a href="#trust" aria-label="Scroll down" class="scroll-cue absolute bottom-6 left-6 hidden text-[var(--color-muted-2)] lg:block">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
   </a>
 </section>

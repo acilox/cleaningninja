@@ -209,14 +209,14 @@ export const guarantee = {
 // `key` maps to the imported image pair in BeforeAfter.astro.
 export const beforeAfter = [
   {
-    key: 'oven',
-    label: 'Oven deep-clean',
-    caption: 'Baked-on grease, gone. A bond-standard oven in one visit.',
-  },
-  {
     key: 'shower',
     label: 'Shower screen',
     caption: 'Soap scum and limescale lifted to streak-free glass.',
+  },
+  {
+    key: 'oven',
+    label: 'Oven deep-clean',
+    caption: 'Baked-on grease, gone. A bond-standard oven in one visit.',
   },
   {
     key: 'carpet',

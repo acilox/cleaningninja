@@ -112,19 +112,29 @@ const pairs: Record<string, { before: ImageMetadata; after: ImageMetadata }> = {
 
     document.querySelectorAll('.ba').forEach(initSlider);
 
-    // Auto-demo: sweep the handle 100%→50% once when it scrolls into view, to teach the interaction.
+    // Auto-demo: sweep the handle once when it scrolls into view, to teach the interaction.
+    // The hero slider gets a more dramatic 3-point sweep (dirty → reveal clean → settle).
     function autoDemo(ba) {
       if (reduce || ba._demoed) return;
       ba._demoed = true;
-      const dur = 900, start = performance.now(), from = 100, to = 50;
-      const tick = (now) => {
-        const p = Math.min((now - start) / dur, 1);
-        const eased = 1 - Math.pow(1 - p, 3);
-        ba._setPos(from + (to - from) * eased);
-        if (p < 1) requestAnimationFrame(tick);
+      const hero = ba.classList.contains('ba--hero');
+      const kf = hero
+        ? [{ p: 100, t: 0 }, { p: 12, t: 1150 }, { p: 55, t: 1750 }]
+        : [{ p: 100, t: 0 }, { p: 50, t: 900 }];
+      const start = performance.now();
+      const step = (now) => {
+        const el = now - start;
+        let i = 0;
+        while (i < kf.length - 1 && el > kf[i + 1].t) i++;
+        if (i >= kf.length - 1) { ba._setPos(kf[kf.length - 1].p); return; }
+        const a = kf[i], b = kf[i + 1];
+        const lp = Math.min((el - a.t) / (b.t - a.t), 1);
+        const eased = 1 - Math.pow(1 - lp, 3);
+        ba._setPos(a.p + (b.p - a.p) * eased);
+        requestAnimationFrame(step);
       };
-      ba._setPos(from);
-      requestAnimationFrame(tick);
+      ba._setPos(kf[0].p);
+      requestAnimationFrame(step);
     }
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {

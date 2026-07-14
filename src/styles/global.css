@@ -322,6 +322,27 @@
 @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-11px); } }
 @keyframes cardIn { from { opacity: 0; } to { opacity: 1; } }
 
+/* Hero before/after showpiece — fills its container, bleeds to the right edge on desktop */
+.ba--hero { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; border: 0; border-radius: 0; }
+.ba--hero .ba-label { top: 1.1rem; font-size: 0.72rem; }
+.ba--hero .ba-handle { width: 54px; height: 54px; margin: -27px 0 0 -27px; }
+.hero-fade { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(to top, rgba(6,8,12,0.6), transparent 34%); }
+@media (min-width: 1024px) {
+  .hero-fade {
+    background:
+      linear-gradient(to right, var(--color-bg) 0%, rgba(6,8,12,0.5) 12%, transparent 34%),
+      linear-gradient(to bottom, rgba(6,8,12,0.65) 0%, transparent 16%);
+  }
+  /* Push the labels/handle clear of the fixed nav on desktop. */
+  .ba--hero .ba-label { top: 5.5rem; }
+}
+.hero-cap {
+  position: absolute; z-index: 3; bottom: 1rem; left: 1.25rem; right: 1.25rem;
+  text-align: center; font-size: 0.76rem; color: var(--color-muted-2);
+  text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+}
+@media (min-width: 1024px) { .hero-cap { left: auto; right: 1.75rem; bottom: 1.75rem; text-align: right; } }
+
 /* ============================================================
    Scroll-driven image reveals (clip-path wipe) — CSS, zero JS
    ============================================================ */
