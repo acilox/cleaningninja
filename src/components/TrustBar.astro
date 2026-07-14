@@ -1,0 +1,23 @@
+---
+import { trustBar } from '../data/site';
+---
+
+<section id="trust" class="border-y border-[var(--color-line)] bg-[var(--color-bg-2)]">
+  <div class="container-x">
+    <div class="grid grid-cols-2 divide-x divide-y divide-[var(--color-line)] sm:grid-cols-4 sm:divide-y-0" data-reveal-group>
+      {trustBar.map((t) => (
+        <div class="px-4 py-8 text-center sm:py-10">
+          <div class="stat-num !text-4xl sm:!text-5xl">
+            <span
+              data-count={t.value}
+              data-prefix={t.prefix ?? ''}
+              data-suffix={t.suffix}
+              data-decimals={String(t.decimals)}
+            >{t.prefix ?? ''}0{t.suffix}</span>
+          </div>
+          <p class="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)] sm:text-sm">{t.label}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

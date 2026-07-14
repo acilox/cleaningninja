@@ -1,6 +1,7 @@
 ---
 import '@fontsource-variable/inter';
-import '@fontsource-variable/syne';
+import '@fontsource-variable/fraunces/opsz.css';
+import '@fontsource-variable/fraunces/opsz-italic.css';
 import '../styles/global.css';
 import { site, faqs } from '../data/site';
 
@@ -11,7 +12,7 @@ interface Props {
 
 const {
   title = 'CleaningNinja | Professional Home & Commercial Cleaning Across Australia',
-  description = 'CleaningNinja — vetted, insured cleaners for homes, offices and end-of-lease bond cleans across Sydney, Melbourne, Brisbane, Adelaide & Perth. Book in 60 seconds. 100% happiness guarantee.',
+  description = 'CleaningNinja — vetted, insured cleaners for homes, offices and end-of-lease bond cleans across Sydney, Melbourne, Brisbane, Adelaide & Perth. Book in 60 seconds. 100% bond-back guarantee.',
 } = Astro.props;
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, ''); // no trailing slash
@@ -92,8 +93,12 @@ const faqLd = {
     <!-- Flag JS early so reveal styles only hide content when JS can un-hide it. -->
     <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
-  <body>
+  <body class="grain">
     <div id="scrollBar" aria-hidden="true"></div>
+
+    <!-- Custom context-aware cursor (pointer:fine only; native cursor is the fallback) -->
+    <div id="cursor" aria-hidden="true"><span class="clabel"></span></div>
+    <div id="cursorDot" aria-hidden="true"></div>
 
     <a
       href="#main"
@@ -103,30 +108,49 @@ const faqLd = {
 
     <slot />
 
-    <!-- ── Lenis smooth scroll (CDN, deferred; purely a premium enhancement) ── -->
-    <script
-      is:inline
-      src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"
-      defer></script>
+    <!-- ── CDN libraries (deferred; the site is fully readable without them) ── -->
+    <script is:inline src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" defer></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js" defer></script>
 
     <script is:inline>
       window.addEventListener('load', () => {
         const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const gsap = window.gsap;
+        const ScrollTrigger = window.ScrollTrigger;
+        const SplitText = window.SplitText;
+        const hasGSAP = !!(gsap && ScrollTrigger);
 
-        // ── Lenis smooth scroll ──
+        if (hasGSAP) {
+          gsap.registerPlugin(ScrollTrigger, ...(SplitText ? [SplitText] : []));
+          ScrollTrigger.config({ ignoreMobileResize: true });
+        }
+
+        // ── Lenis smooth scroll (drive via gsap.ticker when GSAP present) ──
         if (typeof window.Lenis !== 'undefined' && !reduce) {
           const lenis = new window.Lenis({ duration: 1.1, smoothWheel: true });
-          function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-          requestAnimationFrame(raf);
+          window.__lenis = lenis;
+          if (hasGSAP) {
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add((t) => lenis.raf(t * 1000));
+            gsap.ticker.lagSmoothing(0);
+          } else {
+            const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
+            requestAnimationFrame(raf);
+          }
         }
+
+        // ── Hero photo clip-path load wipe (pure CSS transition; no CDN needed) ──
+        const heroPhoto = document.querySelector('.hero-photo');
+        if (heroPhoto) requestAnimationFrame(() => requestAnimationFrame(() => heroPhoto.classList.add('wiped')));
 
         // ── Reveal-on-scroll via IntersectionObserver (no CDN dependency) ──
         const revealEls = document.querySelectorAll(
           '[data-reveal],[data-reveal-left],[data-reveal-right],[data-reveal-group]'
         );
-        const showAll = () => revealEls.forEach((el) => el.classList.add('is-in'));
         if (reduce || !('IntersectionObserver' in window)) {
-          showAll();
+          revealEls.forEach((el) => el.classList.add('is-in'));
         } else {
           const io = new IntersectionObserver(
             (entries) => {
@@ -139,16 +163,183 @@ const faqLd = {
           revealEls.forEach((el) => io.observe(el));
         }
 
-        // ── Step connector line draw (HowItWorks) ──
-        const line = document.querySelector('.step-line--anim');
-        if (line && !reduce && 'IntersectionObserver' in window) {
-          const lio = new IntersectionObserver((entries) => {
-            entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('drawn'); lio.unobserve(e.target); } });
-          }, { threshold: 0.5 });
-          lio.observe(line);
-        } else if (line) {
-          line.classList.add('drawn');
+        // ══════════════════ GSAP-enhanced storytelling (guarded) ══════════════════
+        if (hasGSAP && !reduce) {
+          // Hero parallax — photo, headline and scrim drift at different speeds.
+          const heroTl = () => {
+            if (document.querySelector('.hero-photo img')) {
+              gsap.to('.hero-photo img', { yPercent: 14, ease: 'none',
+                scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: true } });
+            }
+            if (document.querySelector('#heroCopy')) {
+              gsap.to('#heroCopy', { yPercent: -8, opacity: 0.35, ease: 'none',
+                scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: true } });
+            }
+          };
+          heroTl();
+
+          // Per-word masked heading reveals on [data-split] section titles.
+          if (SplitText) {
+            document.fonts.ready.then(() => {
+              document.querySelectorAll('[data-split]').forEach((el) => {
+                const split = SplitText.create(el, { type: 'words', mask: 'words' });
+                gsap.from(split.words, {
+                  yPercent: 115, opacity: 0, duration: 0.8, ease: 'expo.out', stagger: 0.035,
+                  scrollTrigger: { trigger: el, start: 'top 88%' },
+                });
+              });
+              ScrollTrigger.refresh();
+            });
+          }
+
+          // Services — sticky image swap: activate the photo for the centred service.
+          const svcItems = gsap.utils.toArray('.svc-item');
+          const svcPhotos = document.querySelectorAll('.svc-photo');
+          if (svcItems.length && svcPhotos.length) {
+            const setActive = (i) => {
+              svcPhotos.forEach((p, idx) => p.classList.toggle('active', idx === i));
+              svcItems.forEach((it, idx) => it.setAttribute('data-active', String(idx === i)));
+            };
+            setActive(0);
+            svcItems.forEach((item, i) => {
+              ScrollTrigger.create({
+                trigger: item, start: 'top center', end: 'bottom center',
+                onToggle: (self) => self.isActive && setActive(i),
+              });
+            });
+          }
+
+          // How It Works — pinned scroll story (desktop only; mobile stays stacked).
+          const mm = gsap.matchMedia();
+          mm.add('(min-width: 900px)', () => {
+            const how = document.querySelector('#how .how-stage');
+            const steps = gsap.utils.toArray('#how .how-step');
+            const ticks = gsap.utils.toArray('#how .how-tick');
+            if (!how || steps.length < 2) return;
+            how.classList.add('is-pinned');
+            gsap.set(steps, { autoAlpha: 0, y: 50 });
+            gsap.set(steps[0], { autoAlpha: 1, y: 0 });
+            const tl = gsap.timeline({
+              scrollTrigger: { trigger: '#how', start: 'top top', end: '+=220%', scrub: 1, pin: how, anticipatePin: 1 },
+            });
+            steps.forEach((step, i) => {
+              if (i === 0) return;
+              tl.to(steps[i - 1], { autoAlpha: 0, y: -40, duration: 0.4 })
+                .to(step, { autoAlpha: 1, y: 0, duration: 0.5 }, '<0.1');
+              if (ticks[i - 1]) tl.to(ticks[i - 1], { color: 'var(--color-accent)', duration: 0.2 }, '<');
+            });
+            if (ticks[steps.length - 1]) tl.to(ticks[steps.length - 1], { color: 'var(--color-accent)', duration: 0.2 });
+            return () => {
+              if (tl.scrollTrigger) tl.scrollTrigger.kill();
+              tl.kill();
+              how.classList.remove('is-pinned');
+              gsap.set(steps, { clearProps: 'all' });
+            };
+          });
+
+          // Recompute positions once images have decoded.
+          ScrollTrigger.refresh();
+          window.addEventListener('resize', () => ScrollTrigger.refresh());
         }
+
+        // ── Count-up for stat numbers (IO-driven; no CDN) ──
+        (function () {
+          const nums = document.querySelectorAll('[data-count]');
+          if (!nums.length) return;
+          const fmt = (v, decimals) =>
+            v.toLocaleString('en-AU', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+          const run = (el) => {
+            const target = parseFloat(el.getAttribute('data-count'));
+            const prefix = el.getAttribute('data-prefix') || '';
+            const suffix = el.getAttribute('data-suffix') || '';
+            const decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
+            if (reduce) { el.textContent = prefix + fmt(target, decimals) + suffix; return; }
+            const dur = 1600, start = performance.now();
+            const step = (now) => {
+              const p = Math.min((now - start) / dur, 1);
+              const eased = 1 - Math.pow(1 - p, 3);
+              el.textContent = prefix + fmt(target * eased, decimals) + suffix;
+              if (p < 1) requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+          };
+          if (!('IntersectionObserver' in window)) { nums.forEach(run); return; }
+          const io = new IntersectionObserver((entries) => {
+            entries.forEach((e) => { if (e.isIntersecting) { run(e.target); io.unobserve(e.target); } });
+          }, { threshold: 0.6 });
+          nums.forEach((n) => io.observe(n));
+        })();
+
+        // ── Custom context-aware cursor (pointer:fine only) ──
+        (function () {
+          if (reduce || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+          const ring = document.getElementById('cursor');
+          const dot = document.getElementById('cursorDot');
+          if (!ring || !dot) return;
+          document.documentElement.classList.add('cursor-on');
+          const label = ring.querySelector('.clabel');
+          let rx = innerWidth / 2, ry = innerHeight / 2, dx = rx, dy = ry, mx = rx, my = ry;
+          window.addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
+          const loop = () => {
+            dx += (mx - dx) * 0.9; dy += (my - dy) * 0.9;
+            rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
+            dot.style.transform = `translate(${dx}px, ${dy}px)`;
+            ring.style.transform = `translate(${rx}px, ${ry}px)`;
+            requestAnimationFrame(loop);
+          };
+          requestAnimationFrame(loop);
+          const setLabel = (t) => { if (label) label.textContent = t; ring.classList.toggle('is-label', !!t); };
+          document.querySelectorAll('a, button, [data-cursor], .ba, [role="slider"]').forEach((el) => {
+            const custom = el.getAttribute('data-cursor');
+            el.addEventListener('pointerenter', () => { ring.classList.add('is-hover'); setLabel(custom || ''); });
+            el.addEventListener('pointerleave', () => { ring.classList.remove('is-hover'); setLabel(''); });
+          });
+        })();
+
+        // ── 3D tilt cards (hover:hover only) ──
+        (function () {
+          if (reduce || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+          document.querySelectorAll('[data-tilt]').forEach((card) => {
+            let raf = 0;
+            const move = (e) => {
+              const r = card.getBoundingClientRect();
+              const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+              const rotY = (px - 0.5) * 10, rotX = (0.5 - py) * 10;
+              card.style.setProperty('--gx', px * 100 + '%');
+              card.style.setProperty('--gy', py * 100 + '%');
+              cancelAnimationFrame(raf);
+              raf = requestAnimationFrame(() => {
+                card.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+              });
+            };
+            card.addEventListener('pointermove', move);
+            card.addEventListener('pointerleave', () => { cancelAnimationFrame(raf); card.style.transform = ''; });
+          });
+        })();
+
+        // ── Magnetic elements (pointer only) — lerp + elastic spring-back if GSAP ──
+        (function () {
+          if (reduce || !window.matchMedia('(pointer:fine)').matches) return;
+          document.querySelectorAll('[data-magnetic]').forEach((el) => {
+            const label = el.querySelector('.mag-label');
+            el.addEventListener('pointermove', (e) => {
+              const r = el.getBoundingClientRect();
+              const x = e.clientX - r.left - r.width / 2;
+              const y = e.clientY - r.top - r.height / 2;
+              el.style.transform = `translate(${x * 0.18}px, ${y * 0.3}px)`;
+              if (label) label.style.transform = `translate(${x * 0.08}px, ${y * 0.12}px)`;
+            });
+            el.addEventListener('pointerleave', () => {
+              if (hasGSAP) {
+                gsap.to(el, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1,0.3)' });
+                if (label) gsap.to(label, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1,0.3)' });
+              } else {
+                el.style.transform = '';
+                if (label) label.style.transform = '';
+              }
+            });
+          });
+        })();
       });
 
       // ── Scroll progress bar + nav state + sticky CTA (no lib needed) ──
@@ -183,49 +374,6 @@ const faqLd = {
         menu.querySelectorAll('a').forEach((a) =>
           a.addEventListener('click', () => menu.classList.add('hidden'))
         );
-      })();
-
-      // ── Count-up for stat numbers ──
-      (function () {
-        const nums = document.querySelectorAll('[data-count]');
-        if (!nums.length) return;
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const fmt = (v, decimals) =>
-          v.toLocaleString('en-AU', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
-        const run = (el) => {
-          const target = parseFloat(el.getAttribute('data-count'));
-          const suffix = el.getAttribute('data-suffix') || '';
-          const decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
-          if (reduce) { el.textContent = fmt(target, decimals) + suffix; return; }
-          const dur = 1600, start = performance.now();
-          const step = (now) => {
-            const p = Math.min((now - start) / dur, 1);
-            const eased = 1 - Math.pow(1 - p, 3);
-            el.textContent = fmt(target * eased, decimals) + suffix;
-            if (p < 1) requestAnimationFrame(step);
-          };
-          requestAnimationFrame(step);
-        };
-        if (!('IntersectionObserver' in window)) { nums.forEach(run); return; }
-        const io = new IntersectionObserver((entries) => {
-          entries.forEach((e) => { if (e.isIntersecting) { run(e.target); io.unobserve(e.target); } });
-        }, { threshold: 0.6 });
-        nums.forEach((n) => io.observe(n));
-      })();
-
-      // ── Magnetic elements (pointer only, respects reduced-motion) ──
-      (function () {
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (reduce || !window.matchMedia('(pointer:fine)').matches) return;
-        document.querySelectorAll('[data-magnetic]').forEach((el) => {
-          el.addEventListener('pointermove', (e) => {
-            const r = el.getBoundingClientRect();
-            const x = e.clientX - r.left - r.width / 2;
-            const y = e.clientY - r.top - r.height / 2;
-            el.style.transform = `translate(${x * 0.14}px, ${y * 0.22}px)`;
-          });
-          el.addEventListener('pointerleave', () => { el.style.transform = ''; });
-        });
       })();
 
       // ── FAQ accordion ──

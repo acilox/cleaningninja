@@ -1,11 +1,12 @@
 @import "tailwindcss";
 
 /* ============================================================
-   CleaningNinja — design system (dark, premium, 3D-animated)
-   Brand: deep near-black canvas, a sharp teal-green accent and a
-   warm gold for ratings. Geometric display (Syne) + clean sans
-   body (Inter). Motion is CSS/vanilla-JS driven (transform/opacity),
-   fully gated behind prefers-reduced-motion. Mobile-first.
+   CleaningNinja — design system (v3: editorial-premium on dark)
+   Cinematic near-black canvas, a sharp teal-green accent and a
+   warm gold for ratings. Editorial serif display (Fraunces, with
+   true italic accents) + clean sans body (Inter). Motion is
+   transform/opacity/clip-path only (GPU), fully gated behind
+   prefers-reduced-motion and a `.js` class. Mobile-first.
 
    NOTE: component classes live in `@layer components` so Tailwind
    utilities (e.g. `hidden`, `md:flex`) always override them. Rules
@@ -30,9 +31,9 @@
   --color-muted: #64748b;       /* supporting text */
   --color-muted-2: #94a3b8;     /* brighter muted */
 
-  /* Type */
+  /* Type — editorial serif display + sans body */
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: "Syne Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
 }
 
 /* ---------- Base (elements) ---------- */
@@ -55,6 +56,7 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    position: relative;
   }
 
   ::selection { background: var(--color-accent); color: #04120f; }
@@ -62,36 +64,45 @@
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     color: var(--color-heading);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.05;
+    font-weight: 500;
+    font-optical-sizing: auto;
+    letter-spacing: -0.015em;
+    line-height: 1.06;
   }
+
+  /* Italic accent words inside headings (Fraunces true italic). */
+  h1 em, h2 em, h3 em, .accent-i {
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  img { display: block; max-width: 100%; }
 }
 
 /* ---------- Components (classes; utilities always win over these) ---------- */
 @layer components {
-  .display-1 { font-size: clamp(2.8rem, 8.5vw, 5.6rem); font-weight: 800; letter-spacing: -0.03em; line-height: 0.98; }
-  .display-2 { font-size: clamp(2rem, 5.6vw, 3.3rem); font-weight: 800; letter-spacing: -0.022em; }
+  .display-1 { font-size: clamp(2.9rem, 8.5vw, 6rem); font-weight: 500; letter-spacing: -0.02em; line-height: 1.0; }
+  .display-2 { font-size: clamp(2.1rem, 5.6vw, 3.6rem); font-weight: 500; letter-spacing: -0.018em; }
 
   .eyebrow {
     font-family: var(--font-sans);
     font-weight: 600;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.24em;
     text-transform: uppercase;
     font-size: 0.72rem;
     color: var(--color-accent);
   }
 
-  .lead { color: var(--color-muted-2); font-size: clamp(1.05rem, 1.8vw, 1.28rem); line-height: 1.6; }
+  .lead { color: var(--color-muted-2); font-size: clamp(1.05rem, 1.8vw, 1.3rem); line-height: 1.65; font-family: var(--font-sans); }
 
-  /* Layout helpers */
-  .container-x { width: 100%; max-width: 76rem; margin-inline: auto; padding-inline: 1.25rem; }
-  @media (min-width: 768px) { .container-x { padding-inline: 2rem; } }
-  .section { padding-block: clamp(4.5rem, 10vw, 8rem); position: relative; }
+  /* Layout helpers — generous editorial rhythm */
+  .container-x { width: 100%; max-width: 78rem; margin-inline: auto; padding-inline: 1.25rem; }
+  @media (min-width: 768px) { .container-x { padding-inline: 2.25rem; } }
+  .section { padding-block: clamp(5rem, 11vw, 9.5rem); position: relative; }
 
   /* Gradient text (teal) */
   .text-gradient {
-    background: linear-gradient(100deg, var(--color-accent), #5cead4 60%, var(--color-accent-2));
+    background: linear-gradient(100deg, var(--color-accent), #5cead4 55%, var(--color-accent-2));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -110,12 +121,22 @@
     border-radius: 1.25rem;
   }
 
+  /* Glassmorphic card (over photography) */
+  .glass {
+    background: rgba(15, 19, 24, 0.55);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border-radius: 1.25rem;
+  }
+
   /* Buttons */
   .btn {
     display: inline-flex; align-items: center; gap: 0.55rem;
+    font-family: var(--font-sans);
     font-weight: 600; font-size: 0.98rem;
     padding: 0.9rem 1.6rem; border-radius: 999px;
-    transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s, background-color .25s, color .25s;
+    transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s, background-color .25s, color .25s, border-color .25s;
     will-change: transform;
   }
   .btn-primary {
@@ -130,6 +151,7 @@
     background: rgba(255,255,255,0.02);
   }
   .btn-ghost:hover { border-color: var(--color-accent); color: var(--color-accent); }
+  .btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
 
   /* Nav link underline */
   .nav-link { position: relative; color: var(--color-muted-2); transition: color .2s; }
@@ -140,9 +162,13 @@
   }
   .nav-link:hover::after { width: 100%; }
 
+  /* Wordmark (editorial) */
+  .wordmark { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.01em; }
+
   /* "Same-day quotes" pill */
   .pill {
     display: inline-flex; align-items: center; gap: 0.4rem;
+    font-family: var(--font-sans);
     font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
     padding: 0.32rem 0.7rem; border-radius: 999px;
     color: var(--color-accent);
@@ -153,25 +179,18 @@
 
   /* Marquee */
   .marquee { display: flex; overflow: hidden; user-select: none; gap: 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
-  .marquee__track { display: flex; flex-shrink: 0; gap: 0; min-width: 100%; animation: marquee 28s linear infinite; }
+  .marquee__track { display: flex; flex-shrink: 0; gap: 0; min-width: 100%; animation: marquee 30s linear infinite; }
   .marquee__track--rev { animation-direction: reverse; animation-duration: 34s; }
   .marquee:hover .marquee__track { animation-play-state: paused; }
-  .marquee__item { display: inline-flex; align-items: center; gap: 0.9rem; padding-inline: 1.4rem; font-family: var(--font-display); font-weight: 700; font-size: clamp(1.1rem, 3vw, 1.9rem); color: var(--color-muted-2); white-space: nowrap; }
-  .marquee__item .sep { color: var(--color-accent); }
-
-  /* Service cards (3D flip) */
-  .flip { perspective: 1400px; }
-  .flip__inner { position: relative; transition: transform .7s cubic-bezier(.2,.8,.2,1); transform-style: preserve-3d; height: 100%; }
-  .flip:hover .flip__inner, .flip:focus-within .flip__inner { transform: rotateY(180deg); }
-  .flip__face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; }
-  .flip__back { transform: rotateY(180deg); }
+  .marquee__item { display: inline-flex; align-items: center; gap: 0.9rem; padding-inline: 1.4rem; font-family: var(--font-display); font-weight: 500; font-style: italic; font-size: clamp(1.1rem, 3vw, 1.9rem); color: var(--color-muted-2); white-space: nowrap; }
+  .marquee__item .sep { color: var(--color-accent); font-style: normal; }
 
   /* Stat number */
-  .stat-num { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.6rem, 7vw, 4.2rem); line-height: 1; color: var(--color-heading); }
+  .stat-num { font-family: var(--font-display); font-weight: 500; font-size: clamp(2.6rem, 7vw, 4.2rem); line-height: 1; color: var(--color-heading); }
 
   /* FAQ accordion */
   .faq-item { border-bottom: 1px solid var(--color-line); }
-  .faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; text-align: left; padding: 1.25rem 0; cursor: pointer; }
+  .faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; text-align: left; padding: 1.35rem 0; cursor: pointer; }
   .faq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .38s cubic-bezier(.2,.8,.2,1); }
   .faq-a > div { overflow: hidden; }
   .faq-item[data-open="true"] .faq-a { grid-template-rows: 1fr; }
@@ -192,17 +211,171 @@
 #siteNav.scrolled {
   background: rgba(9,13,19,0.78);
   backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
   border-color: var(--color-line);
 }
-
-/* Step connector */
-.step-line { stroke: var(--color-line); stroke-width: 2; }
-.step-line--anim { stroke: var(--color-accent); stroke-dasharray: 1; stroke-dashoffset: 1; }
-.step-line--anim.drawn { transition: stroke-dashoffset 1.1s ease .1s; stroke-dashoffset: 0; }
 
 /* Sticky mobile CTA */
 #stickyBook { transform: translateY(120%); transition: transform .35s cubic-bezier(.2,.8,.2,1); }
 #stickyBook.show { transform: translateY(0); }
+
+/* ============================================================
+   Animated gradient mesh (replaces Three.js particles) + grain
+   ============================================================ */
+.mesh {
+  position: absolute; inset: -20%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(38% 42% at 18% 22%, rgba(0,212,170,0.18), transparent 60%),
+    radial-gradient(34% 40% at 82% 30%, rgba(0,168,138,0.14), transparent 60%),
+    radial-gradient(46% 50% at 55% 90%, rgba(0,212,170,0.10), transparent 65%);
+  filter: blur(30px);
+  animation: meshDrift 22s ease-in-out infinite alternate;
+}
+@keyframes meshDrift {
+  0%   { transform: translate3d(0,0,0) scale(1); }
+  50%  { transform: translate3d(2%, -1.5%, 0) scale(1.06); }
+  100% { transform: translate3d(-2%, 1.5%, 0) scale(1.02); }
+}
+/* Faint film grain overlay for cinematic texture */
+.grain::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  opacity: 0.04; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   Hero — cinematic photo, Ken Burns, load wipe, parallax
+   ============================================================ */
+.hero-photo {
+  position: absolute; inset: 0; z-index: -2; overflow: hidden;
+  clip-path: inset(0 0 0 0);
+}
+.hero-photo img {
+  width: 100%; height: 100%; object-fit: cover;
+  transform: scale(1.08);
+  animation: kenBurns 18s ease-out forwards;
+}
+@keyframes kenBurns {
+  0%   { transform: scale(1.12) translate(1%, 1%); }
+  100% { transform: scale(1.02) translate(-1%, -1%); }
+}
+/* Legibility scrim over the hero photo */
+.hero-scrim {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    linear-gradient(to bottom, rgba(6,8,12,0.55) 0%, rgba(6,8,12,0.35) 35%, rgba(6,8,12,0.75) 85%, var(--color-bg) 100%),
+    radial-gradient(60% 55% at 50% 40%, transparent, rgba(6,8,12,0.5) 100%);
+}
+/* JS drives a clip-path wipe reveal of the photo on load; CSS keeps it visible if JS never runs. */
+.js .hero-photo { clip-path: inset(0 0 100% 0); }
+.js .hero-photo.wiped { clip-path: inset(0 0 0 0); transition: clip-path 1.2s cubic-bezier(.16,1,.3,1); }
+
+/* ============================================================
+   Scroll-driven image reveals (clip-path wipe) — CSS, zero JS
+   ============================================================ */
+.reveal-img { overflow: hidden; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal-img img {
+      animation: imgWipe linear both;
+      animation-timeline: view();
+      animation-range: entry 8% cover 34%;
+    }
+    @keyframes imgWipe {
+      from { clip-path: inset(0 0 100% 0); transform: scale(1.12); }
+      to   { clip-path: inset(0 0 0 0);    transform: scale(1); }
+    }
+  }
+}
+
+/* ============================================================
+   Before/After comparison slider
+   ============================================================ */
+.ba {
+  position: relative; overflow: hidden; border-radius: 1.25rem;
+  border: 1px solid var(--color-line);
+  aspect-ratio: 3 / 2; user-select: none; touch-action: pan-y;
+  --pos: 50%;
+}
+.ba img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+/* "After" sits on top, clipped from the left by --pos so the left side shows "before". */
+.ba .ba-after { clip-path: inset(0 0 0 var(--pos)); }
+.ba-label {
+  position: absolute; top: 0.9rem; z-index: 3;
+  font-family: var(--font-sans); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.3rem 0.65rem; border-radius: 999px; color: #fff;
+  background: rgba(6,8,12,0.6); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.12);
+}
+.ba-label--before { left: 0.9rem; }
+.ba-label--after  { right: 0.9rem; color: var(--color-accent); border-color: rgba(0,212,170,0.4); }
+.ba-divider { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; z-index: 3; background: rgba(255,255,255,0.9); transform: translateX(-1px); pointer-events: none; box-shadow: 0 0 18px rgba(0,212,170,0.6); }
+.ba-handle {
+  position: absolute; top: 50%; left: var(--pos); z-index: 4;
+  width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 999px;
+  background: rgba(6,8,12,0.7); border: 2px solid var(--color-accent);
+  display: grid; place-items: center; color: var(--color-accent);
+  cursor: ew-resize; backdrop-filter: blur(6px);
+  box-shadow: 0 6px 24px -4px rgba(0,212,170,0.6);
+  transition: transform .18s ease;
+}
+.ba-handle:active { transform: scale(0.94); }
+.ba-handle:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+
+/* ============================================================
+   Services — sticky image swap
+   ============================================================ */
+.svc-sticky { position: sticky; top: 14vh; }
+.svc-stage { position: relative; border-radius: 1.5rem; overflow: hidden; aspect-ratio: 4 / 5; border: 1px solid var(--color-line); }
+.svc-photo { position: absolute; inset: 0; opacity: 0; transition: opacity .6s ease, transform 1.2s ease; transform: scale(1.06); }
+.svc-photo img { width: 100%; height: 100%; object-fit: cover; }
+.svc-photo.active { opacity: 1; transform: scale(1); }
+.svc-item { padding-block: clamp(2.2rem, 6vw, 4rem); border-top: 1px solid var(--color-line); transition: opacity .4s ease; }
+.svc-item:last-child { border-bottom: 1px solid var(--color-line); }
+.svc-item[data-active="false"] { opacity: 0.45; }
+.svc-num { font-family: var(--font-display); font-style: italic; color: var(--color-accent); font-size: 1rem; }
+
+/* How It Works — panels stack normally by default; absolute-stack only while pinned
+   (the pin timeline cross-fades them). No-JS / reduced-motion keeps them readable. */
+.how-stage.is-pinned .how-panels { min-height: 26rem; }
+.how-stage.is-pinned .how-step { position: absolute; inset: 0; margin-top: 0; }
+
+/* ============================================================
+   3D tilt cards
+   ============================================================ */
+.tilt { transform-style: preserve-3d; transition: transform .35s cubic-bezier(.2,.8,.2,1); will-change: transform; }
+.tilt__lift { transform: translateZ(38px); }
+.tilt__glare {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at var(--gx,50%) var(--gy,50%), rgba(255,255,255,0.16), transparent 45%);
+  transition: opacity .3s ease;
+}
+.tilt:hover .tilt__glare { opacity: 1; }
+
+/* ============================================================
+   Custom context-aware cursor (pointer:fine only)
+   ============================================================ */
+#cursor, #cursorDot { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  html.js.cursor-on { cursor: none; }
+  html.js.cursor-on a, html.js.cursor-on button, html.js.cursor-on [role="slider"], html.js.cursor-on .ba, html.js.cursor-on input, html.js.cursor-on select, html.js.cursor-on textarea { cursor: none; }
+  #cursor {
+    display: block; position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none;
+    width: 42px; height: 42px; margin: -21px 0 0 -21px; border-radius: 999px;
+    border: 1px solid rgba(0,212,170,0.7);
+    display: grid; place-items: center;
+    font-family: var(--font-sans); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-accent);
+    transition: width .25s ease, height .25s ease, margin .25s ease, background-color .25s ease, border-color .25s ease;
+    will-change: transform;
+  }
+  #cursor.is-hover { width: 68px; height: 68px; margin: -34px 0 0 -34px; background: rgba(0,212,170,0.10); }
+  #cursor .clabel { opacity: 0; transition: opacity .2s ease; }
+  #cursor.is-label .clabel { opacity: 1; }
+  #cursorDot {
+    display: block; position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none;
+    width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 999px; background: var(--color-accent);
+    will-change: transform;
+  }
+}
 
 /* ---------- Reveal-on-scroll (IntersectionObserver adds .is-in) ----------
    Gated behind `.js` on <html> so that if JavaScript never runs, nothing is
@@ -232,9 +405,14 @@
 [data-reveal-group] > *:nth-child(5) { transition-delay: .28s; }
 [data-reveal-group] > *:nth-child(6) { transition-delay: .35s; }
 
-/* Hero intro — pure CSS so the headline never depends on a CDN */
+/* Hero intro — pure CSS so the headline never depends on a CDN.
+   When GSAP+SplitText run, they take over (JS removes .rise fallback state). */
 .rise { opacity: 0; animation: heroRise .9s cubic-bezier(.2,.8,.2,1) both; }
 @keyframes heroRise { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: none; } }
+
+/* SplitText masked-line reveal support (JS-enhanced hero + headings). */
+.split-mask { visibility: hidden; }          /* revealed by JS once fonts ready */
+.split-line-mask { overflow: clip; display: block; }
 
 /* ---------- Keyframes ---------- */
 @keyframes marquee { to { transform: translateX(-50%); } }
@@ -246,12 +424,15 @@
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
   .rise { opacity: 1 !important; animation: none !important; }
+  .split-mask { visibility: visible !important; }
+  .hero-photo img { animation: none !important; transform: scale(1.02) !important; }
+  .js .hero-photo { clip-path: inset(0 0 0 0) !important; }
+  .mesh { animation: none !important; }
   .js [data-reveal], .js [data-reveal-left], .js [data-reveal-right],
   .js [data-reveal-group] > * { opacity: 1 !important; transform: none !important; }
   .marquee__track { animation: none; }
-  .flip:hover .flip__inner, .flip:focus-within .flip__inner { transform: none; }
-  .flip__back { transform: none; position: relative; }
-  .flip__face { position: relative; }
+  .svc-photo { opacity: 1 !important; transform: none !important; }
+  .tilt { transform: none !important; }
 }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }

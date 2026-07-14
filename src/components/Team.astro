@@ -1,0 +1,41 @@
+---
+import { Image } from 'astro:assets';
+import { team } from '../data/site';
+import teamPhoto from '../assets/trust-team.jpg';
+---
+
+<section id="team" class="section bg-[var(--color-bg-2)]">
+  <div class="container-x">
+    <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      <!-- Photo -->
+      <div class="reveal-img overflow-hidden rounded-2xl border border-[var(--color-line)]" data-reveal-left>
+        <div class="relative">
+          <Image src={teamPhoto} alt="Two vetted CleaningNinja cleaners at a suburban Australian front door" widths={[500, 800, 1100]} sizes="(min-width:1024px) 45vw, 92vw" quality={80} class="aspect-[4/3] w-full object-cover" />
+          <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-[rgba(6,8,12,0.55)] to-transparent"></div>
+          <div class="absolute bottom-5 left-5 flex flex-wrap gap-2">
+            {team.members.map((m) => (
+              <span class="glass rounded-full px-3.5 py-1.5 text-xs font-semibold text-white">
+                {m.name} · <span class="text-[var(--color-accent)]">{m.role}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- Copy -->
+      <div data-reveal-right>
+        <span class="eyebrow">{team.eyebrow}</span>
+        <h2 class="display-2 mt-4" data-split set:html={team.title.replace('house-proud', '<em>house-proud</em>')} />
+        <p class="lead mt-5">{team.lead}</p>
+        <div class="mt-8 grid gap-5 sm:grid-cols-3">
+          {team.points.map((p) => (
+            <div class="card p-5">
+              <div class="font-[var(--font-display)] text-xl font-semibold text-[var(--color-accent)]">{p.k}</div>
+              <p class="mt-1.5 text-sm leading-snug text-[var(--color-muted-2)]">{p.v}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

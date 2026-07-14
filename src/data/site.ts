@@ -58,6 +58,7 @@ export const bookFor = (service: string) =>
 export const services = [
   {
     name: 'Regular House Cleaning',
+    img: 'service-house',
     tag: 'Weekly · Fortnightly · One-off',
     body: 'A spotless home without lifting a finger. Kitchens, bathrooms, floors and dusting — done the same trusted way every visit.',
     points: ['Same cleaner each visit', 'Eco-friendly products', 'Fully insured & police-checked'],
@@ -65,6 +66,7 @@ export const services = [
   },
   {
     name: 'End-of-Lease Bond Clean',
+    img: 'service-bond-clean',
     tag: 'Get your bond back — guaranteed',
     body: 'A meticulous, agent-approved clean built around the inspection checklist. If they’re not happy, we come back free.',
     points: ['Real-estate checklist', 'Oven, windows & carpets', '100% bond-back re-clean guarantee'],
@@ -72,6 +74,7 @@ export const services = [
   },
   {
     name: 'Commercial & Office',
+    img: 'service-commercial',
     tag: 'After-hours, no disruption',
     body: 'Presentable offices, gyms and retail spaces — cleaned after close so your team walks into fresh every morning.',
     points: ['Flexible after-hours slots', 'Sanitised high-touch zones', 'Consistent, uniformed crews'],
@@ -79,6 +82,7 @@ export const services = [
   },
   {
     name: 'Carpet & Upholstery',
+    img: 'service-carpet',
     tag: 'Deep steam extraction',
     body: 'Lift years of dirt, stains and allergens from carpets and lounges with hot-water extraction that dries fast.',
     points: ['Stain & odour treatment', 'Pet & allergy safe', 'Fast-dry process'],
@@ -86,6 +90,7 @@ export const services = [
   },
   {
     name: 'Window Cleaning',
+    img: 'service-window',
     tag: 'Streak-free, inside & out',
     body: 'Crystal-clear windows, tracks and sills — from ground-floor homes to multi-storey shopfronts.',
     points: ['Interior + exterior', 'Screens & tracks included', 'Purified-water finish'],
@@ -93,6 +98,7 @@ export const services = [
   },
   {
     name: 'Spring & Deep Clean',
+    img: 'service-deep-clean',
     tag: 'Top-to-bottom reset',
     body: 'The full detail — inside cupboards, behind appliances, skirting, fans and every forgotten corner made new.',
     points: ['Inside appliances & cupboards', 'Skirting, fans & vents', 'Perfect before/after moves'],
@@ -141,6 +147,7 @@ export const testimonials = [
     name: 'Sarah M.',
     where: 'Bondi, NSW',
     rating: 5,
+    date: 'Bond clean · Mar 2026',
     quote:
       'Booked a bond clean the night before we moved out and got the full deposit back. The place looked better than when we moved in.',
   },
@@ -148,6 +155,7 @@ export const testimonials = [
     name: 'James T.',
     where: 'Richmond, VIC',
     rating: 5,
+    date: 'Fortnightly · Feb 2026',
     quote:
       'Same cleaner every fortnight, always on time, always thorough. Honestly the easiest recurring service we’ve ever set up.',
   },
@@ -155,6 +163,7 @@ export const testimonials = [
     name: 'Priya K.',
     where: 'South Bank, QLD',
     rating: 5,
+    date: 'Office clean · Apr 2026',
     quote:
       'Our office has never looked this good. The after-hours crew is invisible — we just arrive to a fresh space every morning.',
   },
@@ -162,6 +171,7 @@ export const testimonials = [
     name: 'Daniel R.',
     where: 'Glenelg, SA',
     rating: 5,
+    date: 'Deep clean · Jan 2026',
     quote:
       'Missed one spot on the first deep clean, mentioned it, and they were back the next day at no charge. That’s rare these days.',
   },
@@ -173,6 +183,66 @@ export const stats = [
   { value: 98, suffix: '%', label: 'Customer satisfaction' },
   { value: 5, suffix: ' cities', label: 'Across Australia' },
 ];
+
+// ── Trust bar — the full-width strip under the hero ─────────────────────────
+export const trustBar = [
+  { value: 4.9, suffix: '', decimals: 1, label: 'Average rating', prefix: '★ ' },
+  { value: 300, suffix: '+', decimals: 0, label: 'Verified reviews' },
+  { value: 1200, suffix: '+', decimals: 0, label: 'Cleans completed' },
+  { value: 100, suffix: '%', decimals: 0, label: 'Bond-back guarantee' },
+];
+
+// ── Guarantee — dedicated conversion section ────────────────────────────────
+export const guarantee = {
+  eyebrow: 'Our promise',
+  title: 'The 100% Bond-Back Guarantee',
+  lead: 'If your agent or landlord isn’t satisfied with an end-of-lease clean, we return and re-clean the flagged areas free — within 72 hours. In writing, every time.',
+  points: [
+    'Agent-approved inspection checklist',
+    'Free 72-hour re-clean if anything’s flagged',
+    'Fully insured & police-checked crews',
+  ],
+  seal: 'Guaranteed in writing',
+};
+
+// ── Before/After pairs — client-generated, identical framing per pair ───────
+// `key` maps to the imported image pair in BeforeAfter.astro.
+export const beforeAfter = [
+  {
+    key: 'oven',
+    label: 'Oven deep-clean',
+    caption: 'Baked-on grease, gone. A bond-standard oven in one visit.',
+  },
+  {
+    key: 'shower',
+    label: 'Shower screen',
+    caption: 'Soap scum and limescale lifted to streak-free glass.',
+  },
+  {
+    key: 'carpet',
+    label: 'Carpet restoration',
+    caption: 'Ground-in dirt and stains extracted — plush and bright again.',
+  },
+];
+
+// ── Team — trust section ────────────────────────────────────────────────────
+export const team = {
+  eyebrow: 'Who shows up',
+  title: 'Vetted, uniformed, and genuinely house-proud',
+  lead: 'Every CleaningNinja professional is police-checked, fully insured and trained to our checklist before their first job. No sub-contracted strangers — just a crew you’ll recognise.',
+  points: [
+    { k: '100%', v: 'Police-checked & insured' },
+    { k: 'Same crew', v: 'Wherever possible, every visit' },
+    { k: 'Trained', v: 'To a fixed, agent-grade checklist' },
+  ],
+  members: [
+    { name: 'Mia & Jordan', role: 'Bond-clean specialists' },
+    { name: 'The Sydney crew', role: 'Homes & offices' },
+  ],
+};
+
+// ── Real-estate agents who approve our bond cleans (wordmark row) ────────────
+export const agentLogos = ['Ray White', 'LJ Hooker', 'First National', 'Belle Property', 'Harcourts'];
 
 // ── FAQs ──────────────────────────────────────────────────────────────────
 export const faqs = [

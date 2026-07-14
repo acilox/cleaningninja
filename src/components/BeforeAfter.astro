@@ -1,0 +1,156 @@
+---
+import { Image } from 'astro:assets';
+import { beforeAfter } from '../data/site';
+
+import ovenB from '../assets/ba-oven-before.jpg';
+import ovenA from '../assets/ba-oven-after.jpg';
+import showerB from '../assets/ba-shower-before.jpg';
+import showerA from '../assets/ba-shower-after.jpg';
+import carpetB from '../assets/ba-carpet-before.jpg';
+import carpetA from '../assets/ba-carpet-after.jpg';
+
+const pairs: Record<string, { before: ImageMetadata; after: ImageMetadata }> = {
+  oven: { before: ovenB, after: ovenA },
+  shower: { before: showerB, after: showerA },
+  carpet: { before: carpetB, after: carpetA },
+};
+---
+
+<section id="results" class="section bg-[var(--color-bg-2)]">
+  <div class="container-x">
+    <div class="mx-auto max-w-2xl text-center" data-reveal>
+      <span class="eyebrow">See the difference</span>
+      <h2 class="display-2 mt-4" data-split>Drag to reveal the <em>clean</em>.</h2>
+      <p class="lead mx-auto mt-5 max-w-xl">
+        Real jobs, identical framing. Slide the handle to watch grime become bond-standard — this is the standard on every visit.
+      </p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="mt-10 flex flex-wrap justify-center gap-2" role="tablist" aria-label="Before and after examples" data-reveal>
+      {beforeAfter.map((p, i) => (
+        <button
+          class="ba-tab rounded-full border px-4 py-2 text-sm font-semibold transition"
+          role="tab"
+          aria-selected={i === 0 ? 'true' : 'false'}
+          data-tab={p.key}
+        >{p.label}</button>
+      ))}
+    </div>
+
+    <!-- Panels -->
+    <div class="mx-auto mt-8 max-w-4xl" data-reveal>
+      {beforeAfter.map((p, i) => (
+        <div class={`ba-panel ${i === 0 ? '' : 'hidden'}`} data-panel={p.key}>
+          <div class="ba" style="--pos:50%" data-cursor="Drag">
+            <Image class="ba-before" src={pairs[p.key].before} alt={`${p.label} — before cleaning`} widths={[600, 900, 1200]} sizes="(min-width:768px) 56rem, 92vw" quality={78} loading="lazy" />
+            <Image class="ba-after" src={pairs[p.key].after} alt={`${p.label} — after cleaning`} widths={[600, 900, 1200]} sizes="(min-width:768px) 56rem, 92vw" quality={78} loading="lazy" />
+            <span class="ba-label ba-label--before">Before</span>
+            <span class="ba-label ba-label--after">After</span>
+            <div class="ba-divider"></div>
+            <div
+              class="ba-handle"
+              role="slider"
+              tabindex="0"
+              aria-label={`${p.label}: reveal cleaned result`}
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="50"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
+            </div>
+          </div>
+          <p class="mt-4 text-center text-sm text-[var(--color-muted-2)]">{p.caption}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .ba-tab { border-color: var(--color-line); color: var(--color-muted-2); background: transparent; }
+  .ba-tab:hover { color: var(--color-text); border-color: var(--color-muted); }
+  .ba-tab[aria-selected="true"] { color: #04120f; background: var(--color-accent); border-color: var(--color-accent); }
+</style>
+
+<script is:inline>
+  (function () {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Each .ba is an independent slider (pointer + touch + keyboard).
+    function initSlider(ba) {
+      const handle = ba.querySelector('.ba-handle');
+      const setPos = (pct) => {
+        pct = Math.max(0, Math.min(100, pct));
+        ba.style.setProperty('--pos', pct + '%');
+        if (handle) handle.setAttribute('aria-valuenow', String(Math.round(pct)));
+      };
+      const fromEvent = (e) => {
+        const r = ba.getBoundingClientRect();
+        const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+        setPos((x / r.width) * 100);
+      };
+      let dragging = false;
+      const start = (e) => { dragging = true; ba.setAttribute('data-dragging', 'true'); fromEvent(e); };
+      const move = (e) => { if (dragging) { fromEvent(e); if (e.cancelable) e.preventDefault(); } };
+      const end = () => { dragging = false; ba.removeAttribute('data-dragging'); };
+      ba.addEventListener('pointerdown', start);
+      window.addEventListener('pointermove', move, { passive: false });
+      window.addEventListener('pointerup', end);
+      // Keyboard on the handle.
+      if (handle) {
+        handle.addEventListener('keydown', (e) => {
+          const cur = parseFloat(ba.style.getPropertyValue('--pos')) || 50;
+          if (e.key === 'ArrowLeft') { setPos(cur - 4); e.preventDefault(); }
+          if (e.key === 'ArrowRight') { setPos(cur + 4); e.preventDefault(); }
+          if (e.key === 'Home') { setPos(0); e.preventDefault(); }
+          if (e.key === 'End') { setPos(100); e.preventDefault(); }
+        });
+      }
+      ba._setPos = setPos;
+    }
+
+    document.querySelectorAll('.ba').forEach(initSlider);
+
+    // Auto-demo: sweep the handle 100%→50% once when it scrolls into view, to teach the interaction.
+    function autoDemo(ba) {
+      if (reduce || ba._demoed) return;
+      ba._demoed = true;
+      const dur = 900, start = performance.now(), from = 100, to = 50;
+      const tick = (now) => {
+        const p = Math.min((now - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        ba._setPos(from + (to - from) * eased);
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      ba._setPos(from);
+      requestAnimationFrame(tick);
+    }
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting && !e.target.closest('.hidden')) { autoDemo(e.target); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.5 });
+      document.querySelectorAll('.ba').forEach((ba) => io.observe(ba));
+    }
+
+    // Tabs — switch visible panel; run the demo on the newly shown slider.
+    const tabs = document.querySelectorAll('.ba-tab');
+    const panels = document.querySelectorAll('.ba-panel');
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const key = tab.getAttribute('data-tab');
+        tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
+        panels.forEach((panel) => {
+          const on = panel.getAttribute('data-panel') === key;
+          panel.classList.toggle('hidden', !on);
+          if (on) {
+            const ba = panel.querySelector('.ba');
+            if (ba) { ba._demoed = false; autoDemo(ba); }
+          }
+        });
+      });
+    });
+  })();
+</script>
