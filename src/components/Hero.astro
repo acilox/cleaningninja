@@ -2,59 +2,86 @@
 import { Image } from 'astro:assets';
 import { site } from '../data/site';
 import heroBg from '../assets/hero-background.jpg';
+
+const trust = ['Police-checked', 'Fully insured', 'Same-day quotes'];
 ---
 
-<section id="top" class="relative flex min-h-[100svh] items-center overflow-hidden pt-28 pb-20">
-  <!-- Cinematic hero photo (Ken Burns + JS clip-path load wipe) -->
-  <div class="hero-photo">
-    <Image src={heroBg} alt="A pristine, softly lit modern Australian living space at dusk" widths={[768, 1280, 1920, 2400]} sizes="100vw" loading="eager" fetchpriority="high" quality={82} />
-  </div>
-  <!-- Legibility scrim + subtle teal glow -->
-  <div class="hero-scrim"></div>
+<section id="top" class="hero relative overflow-hidden">
   <div class="mesh" aria-hidden="true"></div>
+  <span class="hero-orb" aria-hidden="true"></span>
 
-  <div class="container-x relative w-full">
-    <div id="heroCopy" class="max-w-3xl">
-      <span class="eyebrow rise" style="animation-delay:.05s">Australia-wide · Insured · Bond-back guaranteed</span>
+  <div class="container-x relative grid items-center gap-12 pt-32 pb-20 lg:min-h-[100svh] lg:grid-cols-[1.02fr_0.98fr] lg:gap-14 lg:pt-24 lg:pb-24">
+    <!-- LEFT — editorial content -->
+    <div id="heroCopy" class="relative z-10 max-w-xl">
+      <span class="hero-pill rise" style="animation-delay:.05s">
+        <span class="dot"></span>
+        <span class="text-[var(--color-warm)]">★★★★★</span>
+        Rated 4.9 by 300+ Australian homes
+      </span>
 
-      <h1 class="display-1 mt-6 text-balance rise" style="animation-delay:.15s" id="heroTitle">
+      <h1 id="heroTitle" class="hero-title mt-6 rise" style="animation-delay:.15s">
         A spotless space,<br /><span class="text-gradient"><em>every single time.</em></span>
       </h1>
 
-      <p class="lead mt-7 max-w-xl rise" style="animation-delay:.35s">
+      <p class="lead mt-6 rise" style="animation-delay:.32s">
         {site.subtagline}
       </p>
 
-      <div class="mt-9 flex flex-wrap items-center gap-3 rise" style="animation-delay:.55s">
-        <a href="#quote" data-magnetic data-cursor="Book" class="btn btn-primary">
+      <div class="mt-8 flex flex-wrap items-center gap-3 rise" style="animation-delay:.46s">
+        <a href="#quote" data-magnetic data-cursor="Book" class="btn btn-primary btn-lg">
           <span class="mag-label inline-flex items-center gap-2">
             Get a free quote
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </span>
         </a>
-        <a href="#services" class="btn btn-ghost">See our services</a>
-        <span class="pill ml-1 hidden sm:inline-flex"><span class="dot"></span>Same-day quotes</span>
+        <a href="#results" data-cursor="See" class="btn btn-ghost btn-lg">See the results</a>
       </div>
 
-      <!-- Trust row -->
-      <div class="mt-11 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-[var(--color-text)] rise" style="animation-delay:.7s">
-        <span class="inline-flex items-center gap-2">
-          <span class="text-lg text-[var(--color-warm)]">★★★★★</span> 4.9 from 300+ reviews
-        </span>
-        <span class="inline-flex items-center gap-2">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>
-          Police-checked cleaners
-        </span>
-        <span class="inline-flex items-center gap-2">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>
-          Fully insured
-        </span>
+      <ul class="mt-9 flex flex-wrap gap-x-6 gap-y-2.5 rise" style="animation-delay:.58s">
+        {trust.map((t) => (
+          <li class="inline-flex items-center gap-2 text-sm text-[var(--color-text)]">
+            <svg class="text-[var(--color-accent)]" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            {t}
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <!-- RIGHT — framed cinematic panel + floating proof -->
+    <div class="hero-visual relative z-10">
+      <div class="hero-frame">
+        <Image src={heroBg} alt="A pristine, softly lit modern Australian living space at dusk" widths={[500, 800, 1100, 1400]} sizes="(min-width:1024px) 45vw, 92vw" loading="eager" fetchpriority="high" quality={82} class="hero-img" />
+        <div class="hero-frame-grad"></div>
+      </div>
+
+      <!-- Floating card: rating -->
+      <div class="hero-fc hero-fc--rating">
+        <div class="flex items-center gap-3">
+          <span class="hero-fc-num">4.9</span>
+          <div>
+            <div class="text-[var(--color-warm)] leading-none">★★★★★</div>
+            <p class="mt-1 text-xs text-[var(--color-muted-2)]">300+ verified reviews</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating card: guarantee -->
+      <div class="hero-fc hero-fc--guarantee">
+        <div class="flex items-center gap-3">
+          <span class="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+          </span>
+          <div>
+            <p class="text-sm font-semibold text-white leading-tight">100% Bond-back</p>
+            <p class="text-xs text-[var(--color-muted-2)]">guaranteed in writing</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Scroll cue -->
-  <a href="#trust" aria-label="Scroll down" class="scroll-cue absolute bottom-6 left-1/2 -translate-x-1/2 text-[var(--color-muted-2)]">
+  <a href="#trust" aria-label="Scroll down" class="scroll-cue absolute bottom-6 left-1/2 hidden -translate-x-1/2 text-[var(--color-muted-2)] lg:block">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
   </a>
 </section>

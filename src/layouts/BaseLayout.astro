@@ -141,9 +141,9 @@ const faqLd = {
           }
         }
 
-        // ── Hero photo clip-path load wipe (pure CSS transition; no CDN needed) ──
-        const heroPhoto = document.querySelector('.hero-photo');
-        if (heroPhoto) requestAnimationFrame(() => requestAnimationFrame(() => heroPhoto.classList.add('wiped')));
+        // ── Hero frame clip-path load wipe (pure CSS transition; no CDN needed) ──
+        const heroFrame = document.querySelector('.hero-frame');
+        if (heroFrame) requestAnimationFrame(() => requestAnimationFrame(() => heroFrame.classList.add('wiped')));
 
         // ── Reveal-on-scroll via IntersectionObserver (no CDN dependency) ──
         const revealEls = document.querySelectorAll(
@@ -165,22 +165,33 @@ const faqLd = {
 
         // ══════════════════ GSAP-enhanced storytelling (guarded) ══════════════════
         if (hasGSAP && !reduce) {
-          // Hero parallax — photo, headline and scrim drift at different speeds.
-          const heroTl = () => {
-            if (document.querySelector('.hero-photo img')) {
-              gsap.to('.hero-photo img', { yPercent: 14, ease: 'none',
-                scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: true } });
-            }
-            if (document.querySelector('#heroCopy')) {
-              gsap.to('#heroCopy', { yPercent: -8, opacity: 0.35, ease: 'none',
-                scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: true } });
-            }
-          };
-          heroTl();
+          // Hero parallax — framed photo, floating cards and copy drift at different speeds.
+          if (document.querySelector('.hero-img')) {
+            gsap.to('.hero-img', { yPercent: 12, ease: 'none',
+              scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: true } });
+          }
+          if (document.querySelector('.hero-fc--rating')) {
+            gsap.to('.hero-fc--rating', { yPercent: -55, ease: 'none',
+              scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: true } });
+            gsap.to('.hero-fc--guarantee', { yPercent: 40, ease: 'none',
+              scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: true } });
+          }
+          if (document.querySelector('#heroCopy')) {
+            gsap.to('#heroCopy', { yPercent: -6, opacity: 0.45, ease: 'none',
+              scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: true } });
+          }
 
-          // Per-word masked heading reveals on [data-split] section titles.
+          // Per-word masked heading reveals on [data-split] section titles + hero line reveal.
           if (SplitText) {
+            // Hide the hero title only now that GSAP is confirmed present (CSS .rise is the no-CDN fallback).
+            const heroTitle = document.querySelector('#heroTitle');
+            if (heroTitle) { heroTitle.classList.remove('rise'); gsap.set(heroTitle, { autoAlpha: 0 }); }
             document.fonts.ready.then(() => {
+              if (heroTitle) {
+                gsap.set(heroTitle, { autoAlpha: 1 });
+                const hs = SplitText.create(heroTitle, { type: 'lines', mask: 'lines', linesClass: 'hero-line' });
+                gsap.from(hs.lines, { yPercent: 118, duration: 1, stagger: 0.14, ease: 'expo.out' });
+              }
               document.querySelectorAll('[data-split]').forEach((el) => {
                 const split = SplitText.create(el, { type: 'words', mask: 'words' });
                 gsap.from(split.words, {
@@ -279,7 +290,13 @@ const faqLd = {
           document.documentElement.classList.add('cursor-on');
           const label = ring.querySelector('.clabel');
           let rx = innerWidth / 2, ry = innerHeight / 2, dx = rx, dy = ry, mx = rx, my = ry;
-          window.addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
+          // Keep the cursor hidden until the pointer actually moves (no dot parked mid-screen on load).
+          ring.style.opacity = '0'; dot.style.opacity = '0';
+          let shown = false;
+          window.addEventListener('pointermove', (e) => {
+            mx = e.clientX; my = e.clientY;
+            if (!shown) { shown = true; ring.style.opacity = '1'; dot.style.opacity = '1'; }
+          }, { passive: true });
           const loop = () => {
             dx += (mx - dx) * 0.9; dy += (my - dy) * 0.9;
             rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
