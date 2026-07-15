@@ -529,6 +529,67 @@
 @keyframes breathe { 0%,100% { opacity: .85; transform: scale(1);} 50% { opacity: 1; transform: scale(1.08);} }
 
 /* ============================================================
+   Magic-broom hero reveal — a broom sweeps left→right on load,
+   wiping the copy into view with a luminous shine + dust trail.
+   Pure CSS (no CDN needed); JS-gated so no-JS shows text; and
+   fully neutralised under prefers-reduced-motion.
+   Timing: .25s delay, 1.5s sweep. Copy is opacity:1 (rise off);
+   the clip-path wipe is what reveals it, synced to the broom.
+   ============================================================ */
+.js .hero-sweep { animation: sweepReveal 1.5s cubic-bezier(.66,0,.34,1) .25s both; }
+.js .hero-sweep .rise { animation: none !important; opacity: 1 !important; transform: none !important; }
+@keyframes sweepReveal {
+  from { clip-path: inset(-12% 100% -12% 0); }
+  to   { clip-path: inset(-12% 0 -12% 0); }
+}
+
+.hero-broom { position: absolute; inset: 0; z-index: 6; pointer-events: none; overflow: visible; }
+.hero-broom > * { position: absolute; opacity: 0; }
+
+/* shine bar rides the wipe edge */
+.broom-shine {
+  top: -12%; height: 124%; width: 78px; left: 0; margin-left: -39px;
+  background: linear-gradient(90deg, transparent, rgba(0,212,170,0.28) 42%, rgba(255,255,255,0.30) 54%, transparent);
+  filter: blur(7px); mix-blend-mode: screen;
+  animation: broomEdge 1.5s cubic-bezier(.66,0,.34,1) .25s both;
+}
+/* the broom itself, at the leading edge, with a little sweeping wiggle */
+.broom {
+  top: 30%; left: 0; width: 66px; height: 66px; margin-left: -26px;
+  color: var(--color-accent);
+  filter: drop-shadow(0 6px 14px rgba(0,212,170,0.5));
+  transform-origin: 70% 20%;
+  animation: broomEdge 1.5s cubic-bezier(.66,0,.34,1) .25s both, broomWiggle .42s ease-in-out .25s 4;
+}
+.broom svg { width: 100%; height: 100%; }
+.broom .broom-head { opacity: 0.9; }
+.broom .broom-bristle { stroke: rgba(4,18,15,0.55); }
+/* dust sparkles that pop behind the broom as it passes */
+.broom-dust { width: 12px; height: 12px; border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(0,212,170,0.5) 45%, transparent 70%); }
+.broom-dust--1 { top: 26%; left: 26%; animation: dustPop 1.5s ease .8s both; }
+.broom-dust--2 { top: 58%; left: 50%; animation: dustPop 1.5s ease 1.1s both; }
+.broom-dust--3 { top: 40%; left: 74%; animation: dustPop 1.5s ease 1.4s both; }
+
+@keyframes broomEdge {
+  0%   { left: 0%;   opacity: 0; }
+  8%   { opacity: 1; }
+  88%  { left: 100%; opacity: 1; }
+  100% { left: 106%; opacity: 0; }
+}
+@keyframes broomWiggle { 0%,100% { rotate: -7deg; } 50% { rotate: 5deg; } }
+@keyframes dustPop { 0% { opacity: 0; transform: scale(0.3); } 40% { opacity: 1; transform: scale(1.15); } 100% { opacity: 0; transform: scale(0.6) translateY(-10px); } }
+
+/* soft light blooming behind the left copy during the reveal */
+.hero-bloom {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(42% 52% at 22% 44%, rgba(0,212,170,0.16), transparent 70%);
+  opacity: 0;
+}
+.js .hero-bloom { animation: bloomIn 1.7s ease .35s both; }
+@keyframes bloomIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+/* ============================================================
    Interactive polish — tactile hover on cards + review marquee
    ============================================================ */
 .lift { transition: transform .3s cubic-bezier(.2,.8,.2,1), border-color .3s ease, box-shadow .3s ease; }
@@ -590,6 +651,10 @@
   .review-card { margin-right: 0 !important; }
   .review-dup { display: none !important; }
   .reviews-marquee { -webkit-mask-image: none !important; mask-image: none !important; }
+  /* Magic broom off; copy shown normally */
+  .hero-sweep { animation: none !important; clip-path: none !important; }
+  .hero-sweep .rise { opacity: 1 !important; transform: none !important; }
+  .hero-broom, .hero-bloom { display: none !important; }
 }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }

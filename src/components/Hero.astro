@@ -10,6 +10,8 @@ const trust = ['Police-checked', 'Fully insured', 'Bond-back guarantee'];
 <section id="top" class="hero relative overflow-hidden">
   <div class="mesh" aria-hidden="true"></div>
   <span class="hero-orb" aria-hidden="true"></span>
+  <!-- soft light that blooms behind the left copy as the broom sweeps -->
+  <div class="hero-bloom" aria-hidden="true"></div>
 
   <!-- Twinkling sparkles framing the headline (left) -->
   <div class="sparkles" aria-hidden="true">
@@ -31,7 +33,24 @@ const trust = ['Police-checked', 'Fully insured', 'Bond-back guarantee'];
   <!-- pointer-events pass through the empty wrapper so the right-half before/after
        photo stays draggable on desktop; the copy re-enables events for itself. -->
   <div class="container-x pointer-events-none relative z-10 flex items-center pt-28 pb-6 lg:min-h-[100svh] lg:pt-24 lg:pb-24">
-    <div id="heroCopy" class="pointer-events-auto max-w-xl">
+    <div id="heroCopy" class="pointer-events-auto relative max-w-xl">
+      <!-- Magic broom: sweeps across on load, revealing the copy with a shine trail -->
+      <div class="hero-broom" aria-hidden="true">
+        <span class="broom-shine"></span>
+        <span class="broom-dust broom-dust--1"></span>
+        <span class="broom-dust broom-dust--2"></span>
+        <span class="broom-dust broom-dust--3"></span>
+        <span class="broom">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M56 9 32 33" />
+            <path class="broom-bind" d="M25 30 39 40" stroke-width="4.5" />
+            <path class="broom-head" d="M35 37c-2 8-8 15-19 18 1-9 1-14 6-21z" fill="currentColor" stroke="none" />
+            <path class="broom-bristle" d="M23 41 18 54M28 43 25 56M32 44 31 57" stroke-width="1.6" />
+          </svg>
+        </span>
+      </div>
+
+      <div class="hero-sweep">
       <span class="hero-pill rise" style="animation-delay:.05s">
         <span class="dot"></span>
         <span class="text-[var(--color-warm)]">★★★★★</span>
@@ -73,6 +92,7 @@ const trust = ['Police-checked', 'Fully insured', 'Bond-back guarantee'];
           </li>
         ))}
       </ul>
+      </div>
     </div>
   </div>
 

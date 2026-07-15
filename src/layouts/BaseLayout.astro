@@ -177,17 +177,10 @@ const faqLd = {
               scrollTrigger: { trigger: '#top', start: 'top top', end: 'bottom top', scrub: true } });
           }
 
-          // Per-word masked heading reveals on [data-split] section titles + hero line reveal.
+          // Per-word masked heading reveals on [data-split] section titles.
+          // (The hero title is revealed by the pure-CSS magic-broom sweep, not GSAP.)
           if (SplitText) {
-            // Hide the hero title only now that GSAP is confirmed present (CSS .rise is the no-CDN fallback).
-            const heroTitle = document.querySelector('#heroTitle');
-            if (heroTitle) { heroTitle.classList.remove('rise'); gsap.set(heroTitle, { autoAlpha: 0 }); }
             document.fonts.ready.then(() => {
-              if (heroTitle) {
-                gsap.set(heroTitle, { autoAlpha: 1 });
-                const hs = SplitText.create(heroTitle, { type: 'lines', mask: 'lines', linesClass: 'hero-line' });
-                gsap.from(hs.lines, { yPercent: 118, duration: 1, stagger: 0.14, ease: 'expo.out' });
-              }
               document.querySelectorAll('[data-split]').forEach((el) => {
                 const split = SplitText.create(el, { type: 'words', mask: 'words' });
                 gsap.from(split.words, {
